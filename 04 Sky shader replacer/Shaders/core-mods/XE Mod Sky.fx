@@ -6,6 +6,8 @@
 //------------------------------------------------------------
 // Sky and sky reflections
 
+// By Dexter (vtastek), modified by tewlwolow
+
 struct SkyVertOut {
     float4 pos : POSITION;
     float4 color : COLOR0;
