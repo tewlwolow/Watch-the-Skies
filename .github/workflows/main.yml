@@ -20,6 +20,7 @@ jobs:
           rm -f README.md
           mv .git ../temp
           mv .github ../temp
+          ls -a
           
       - name: Build Project
         uses: edgarrc/action-7z@v1
@@ -28,6 +29,7 @@ jobs:
           
       - name: Restore git files
         run: |
+          ls -a
           mv ../temp/.git .
           mv ../temp/.github .
 
