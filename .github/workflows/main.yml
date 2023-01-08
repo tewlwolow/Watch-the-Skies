@@ -1,8 +1,6 @@
 name: Package Watch the Skies
-on:
-  push:
-    tags:
-      - 'v*'
+on: push
+
 jobs:
   build:
     runs-on: ubuntu-latest
