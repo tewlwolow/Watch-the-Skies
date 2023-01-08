@@ -15,9 +15,11 @@ jobs:
         with:
           fetch-depth: 50
           
-      - name: Prune README
+      - name: Prune files
         run:
           rm -f README.md
+          rm -rf .git
+          rm -rf .github
           
       - name: Build Project
         uses: edgarrc/action-7z@v1
