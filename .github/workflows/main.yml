@@ -27,7 +27,7 @@ jobs:
           args: 7z a  ${{env.ARCHIVE_NAME}}.7z
           
       - name: Restore git files
-        run:
+        run: |
           mv ../temp/.git .
           mv ../temp/.github .
 
