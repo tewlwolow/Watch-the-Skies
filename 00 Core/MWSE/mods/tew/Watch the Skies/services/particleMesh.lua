@@ -10,6 +10,9 @@ local particlesPath = "Data Files\\Meshes\\tew\\Watch the Skies\\particles"
 
 --------------------------------------------------------------------------------------
 
+local SNOW_POINT = 0.2
+local RAIN_POINT = 0.1
+
 local particles = {
 	["rain"] = {},
 	["snow"] = {}
@@ -35,6 +38,28 @@ function particleMesh.init()
 	end
 end
 
+local function getBleachedColour(comp, point)
+	return math.clamp(math.lerp(comp, 1.0, point), 0.03, 0.88)
+end
+
+function particleMesh.getModifiedColour(weatherColour)
+	local colours
+	if (WtC.currentWeather.name) == "Snow" or (WtC.nextWeather and WtC.nextWeather.name == "Snow") then
+		colours = {
+			r = getBleachedColour(weatherColour.r, SNOW_POINT),
+			g = getBleachedColour(weatherColour.g, SNOW_POINT),
+			b = getBleachedColour(weatherColour.b, SNOW_POINT)
+		}
+	else
+		colours = {
+			r = getBleachedColour(weatherColour.r, RAIN_POINT),
+			g = getBleachedColour(weatherColour.g, RAIN_POINT),
+			b = getBleachedColour(weatherColour.b, RAIN_POINT)
+		}
+	end
+	return colours
+end
+
 -- Change particle mesh colours in real-time --
 function particleMesh.reColourParticleMesh()
 	if not particleMesh.isValidWeather() or not newParticleMesh then
@@ -54,24 +79,6 @@ end
 function particleMesh.isValidWeather()
 	return (WtC.currentWeather.name == "Rain" or WtC.currentWeather.name == "Thunderstorm" or WtC.currentWeather.name == "Snow")
 	and ((not WtC.nextWeather) or (WtC.nextWeather.name == "Rain" or WtC.nextWeather.name == "Thunderstorm" or WtC.nextWeather.name == "Snow"))
-end
-
-function particleMesh.getModifiedColour(weatherColour)
-	local colours
-	if (WtC.currentWeather.name) == "Snow" or (WtC.nextWeather and WtC.nextWeather.name == "Snow") then
-		colours = {
-			r = math.clamp(weatherColour.r + 0.2, 0.1, 0.9),
-			g = math.clamp(weatherColour.g + 0.2, 0.1, 0.9),
-			b = math.clamp(weatherColour.b + 0.2, 0.1, 0.9)
-		}
-	else
-		colours = {
-			r = math.clamp(weatherColour.r + 0.11, 0.1, 0.9),
-			g = math.clamp(weatherColour.g + 0.12, 0.1, 0.9),
-			b = math.clamp(weatherColour.b + 0.13, 0.1, 0.9)
-		}
-	end
-	return colours
 end
 
 local function swapNode(particle)
