@@ -22,7 +22,7 @@ jobs:
           mv .git ..
           mv .github ..
           
-      - name: Build archive
+      - name: Build Archive
         uses: edgarrc/action-7z@v1
         with:
           args: 7z a  ${{env.ARCHIVE_NAME}}.7z
