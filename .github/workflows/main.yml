@@ -17,8 +17,7 @@ jobs:
           
       - name: Prune README
         run:
-          sudo chown -R $USER:$USER /home/github/actions-runner/_work/Watch-the-Skies
-          rm -rf README.md
+          rm -f README.md
           
       - name: Build Project
         uses: edgarrc/action-7z@v1
