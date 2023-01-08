@@ -1,5 +1,5 @@
 local this = {
-	version = "4.3.0-beta"
+	version = "4.3.1-beta"
 }
 
 return this
