@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 50
           
       - name: Prune files
-        run:
+        run: |
           rm -f README.md
           mv .git ../temp
           mv .github ../temp
