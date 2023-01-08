@@ -18,13 +18,18 @@ jobs:
       - name: Prune files
         run:
           rm -f README.md
-          rm -rf .git
-          rm -rf .github
+          mv .git ../temp
+          mv .github ../temp
           
       - name: Build Project
         uses: edgarrc/action-7z@v1
         with:
           args: 7z a  ${{env.ARCHIVE_NAME}}.7z
+          
+      - name: Restore git files
+        run:
+          mv ../temp/.git .
+          mv ../temp/.github .
 
       - name: Create Release
         uses: notlmn/release-with-changelog@v2
