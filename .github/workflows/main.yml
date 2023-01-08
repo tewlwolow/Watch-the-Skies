@@ -16,8 +16,8 @@ jobs:
       - name: Prune files
         run: |
           rm -f README.md
-          mv .git ../temp
-          mv .github ../temp
+          mv .git ..
+          mv .github ..
           ls -a
           
       - name: Build Project
@@ -28,8 +28,8 @@ jobs:
       - name: Restore git files
         run: |
           ls -a
-          mv ../temp/.git .
-          mv ../temp/.github .
+          mv ../.git .
+          mv ../.github .
 
       - name: Create Release
         uses: notlmn/release-with-changelog@v2
