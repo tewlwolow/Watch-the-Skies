@@ -1,5 +1,8 @@
 name: Package Watch the Skies
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -13,21 +16,19 @@ jobs:
         with:
           fetch-depth: 50
           
-      - name: Prune files
+      - name: Prune Files
         run: |
           rm -f README.md
           mv .git ..
           mv .github ..
-          ls -a
           
-      - name: Build Project
+      - name: Build archive
         uses: edgarrc/action-7z@v1
         with:
           args: 7z a  ${{env.ARCHIVE_NAME}}.7z
           
-      - name: Restore git files
+      - name: Restore Git Files
         run: |
-          ls -a
           mv ../.git .
           mv ../.github .
 
