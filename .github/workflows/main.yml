@@ -12,28 +12,28 @@ jobs:
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 50
-          
+
       - name: Prune Files
         run: |
           rm -f README.md
           mv .git ..
           mv .github ..
-          
+
       - name: Build Archive
         uses: edgarrc/action-7z@v1
         with:
           args: 7z a  ${{env.ARCHIVE_NAME}}.7z
-          
+
       - name: Restore Git Files
         run: |
           mv ../.git .
           mv ../.github .
 
       - name: Create Release
-        uses: notlmn/release-with-changelog@v2
+        uses: notlmn/release-with-changelog@v3
         with:
           header: '### Changelog'
           include-hash: true
