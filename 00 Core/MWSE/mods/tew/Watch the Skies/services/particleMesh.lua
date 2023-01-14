@@ -92,7 +92,7 @@ local function swapNode(particle)
 	particle.object = new
 end
 
--- Randomise particle mesh --
+-- Get a new mesh and swap nodes --
 function particleMesh.changeParticleMesh(particleType)
 	local randomParticleMesh = table.choice(particles[particleType])
 	newParticleMesh = tes3.loadMesh("tew\\Watch the Skies\\particles\\" .. particleType .. "\\" .. randomParticleMesh):clone()
