@@ -116,7 +116,7 @@ function particleMesh.particleMeshChecker()
 		local particleWeatherType = weatherChecklist[weatherNow.name]
 		if particleWeatherType ~= nil then
 			timer.start {
-				duration = 0.25,
+				duration = 0.2,
 				callback = function()
 					particleMesh.changeParticleMesh(particleWeatherType)
 				end,
