@@ -67,10 +67,14 @@ function skyTexture.init()
 
 	-- Also pull vanilla textures if needed --
 	if config.useVanillaSkyTextures then
-		for index, sky in ipairs(weathers.vanillaWeathers) do
-			local texturePath = "Data Files\\Textures" .. "\\" .. sky
-			table.insert(weathers.customWeathers[index], texturePath)
-			debugLog("File added: " .. texturePath)
+		for index, sky in pairs(weathers.vanillaWeathers) do
+			local texturePath = "Data Files\\Textures\\" .. sky
+			if lfs.fileexists(texturePath) then
+				table.insert(weathers.customWeathers[index], texturePath)
+				debugLog("File added: " .. texturePath)
+			else
+				mwse.log("Vanilla sky texture not found: " .. texturePath)
+			end
 		end
 	end
 
