@@ -28,7 +28,7 @@ end
 
 createYesNoButton("Enable debug mode?", "debugLogOn")
 createYesNoButton("Enable randomised cloud textures?", "skyTexture")
-createYesNoButton("Use vanilla sky textures as well?", "useVanillaSkyTextures")
+createYesNoButton("Use vanilla sky textures as well? Note that these need to be in your Data Files/Textures folder, BSA will not work.", "useVanillaSkyTextures")
 createYesNoButton("Enable randomised hours between weather changes?", "dynamicWeatherChanges")
 createYesNoButton("Enable weather changes in interiors?", "interiorTransitions")
 createYesNoButton("Enable seasonal weather?", "seasonalWeather")
