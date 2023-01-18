@@ -33,3 +33,4 @@ You can find the previous mod iterations here:
 
 - [ ] Add falling ash
 - [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
+- [ ] Fix logic for vanilla textures in BSA
