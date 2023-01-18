@@ -29,3 +29,7 @@ You can find the previous mod iterations here:
 -  [tew](https://github.com/tewlwolow/tew)
 -  [Watch-the-Skies-old](https://github.com/tewlwolow/Watch-the-Skies-old)
 
+## :heavy_check_mark: Feature Tracker
+
+- [ ] Add falling ash
+- [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
