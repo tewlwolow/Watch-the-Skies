@@ -73,7 +73,7 @@ function skyTexture.init()
 				table.insert(weathers.customWeathers[index], texturePath)
 				debugLog("File added: " .. texturePath)
 			else
-				mwse.log("Vanilla sky texture not found: " .. texturePath)
+				mwse.log("[Watch the Skies: ERROR] Vanilla sky texture not found: " .. texturePath)
 			end
 		end
 	end
