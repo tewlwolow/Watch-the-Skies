@@ -40,7 +40,9 @@ function interiorTransitions.progress()
 end
 
 
-function interiorTransitions.onCellChanged()
+function interiorTransitions.onCellChanged(e)
+	local cell = e.cell
+	if not cell then return end
 	if (cell.isOrBehavesAsExterior) then
 		if intWeatherTimer then
 			intWeatherTimer:pause()
