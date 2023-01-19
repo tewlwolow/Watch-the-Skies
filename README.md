@@ -31,6 +31,6 @@ You can find the previous mod iterations here:
 
 ## :heavy_check_mark: Feature Tracker
 
-- [ ] Add falling ash
-- [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
-- [ ] Control density of rain and snow meshes
+> - [ ] Add falling ash
+> - [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
+> - [ ] Control density of rain and snow meshes
