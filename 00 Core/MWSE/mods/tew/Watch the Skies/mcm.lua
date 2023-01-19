@@ -36,7 +36,6 @@ createYesNoButton("Enable seasonal daytime hours?", "seasonalDaytime")
 createYesNoButton("Randomise max particles?", "particleAmount")
 createYesNoButton("Randomise clouds speed?", "cloudSpeed")
 createYesNoButton("Randomise rain and snow particle meshes?", "particleMesh")
-createYesNoButton("Use different sky colour calculations (recommended with my modern WA preset, requires latest MGE XE)", "customSkyColour")
 
 page:createDropdown {
 	label = "Cloud speed mode:",

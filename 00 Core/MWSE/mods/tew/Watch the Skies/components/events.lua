@@ -56,12 +56,6 @@ local services = {
 			local interiorTransitions = require("tew.Watch the Skies.services.interiorTransitions")
 			event.register(tes3.event.cellChanged, interiorTransitions.onCellChanged, { priority = -150 })
 		end,
-	},
-	customSkyColour = {
-		init = function()
-			local customSkyColour = require("tew.Watch the Skies.services.customSkyColour")
-			event.register(tes3.event.loaded, customSkyColour.startTimer)
-		end,
 	}
 }
 
