@@ -97,11 +97,11 @@ function particleMesh.changeParticleMesh(particleType)
 	local randomParticleMesh = table.choice(particles[particleType])
 	newParticleMesh = tes3.loadMesh("tew\\Watch the Skies\\particles\\" .. particleType .. "\\" .. randomParticleMesh):clone()
 
-	for _, particle in pairs(WtC.particlesActive) do
-		swapNode(particle)
-	end
-	for _, particle in pairs(WtC.particlesInactive) do
-		swapNode(particle)
+	local particleTables = {WtC.particlesActive, WtC.particlesInactive}
+	for _, particleTable in pairs(particleTables) do
+		for _, particle in pairs(particleTable) do
+			swapNode(particle)
+		end
 	end
 
 	WtC.sceneRainRoot:updateEffects()
