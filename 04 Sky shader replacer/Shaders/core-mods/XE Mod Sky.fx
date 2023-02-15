@@ -51,8 +51,7 @@ float4 SkyPS(SkyVertOut IN, float2 vpos : VPOS) : COLOR0 {
 		for(int i = 1; i <= N; i++)
 		{
 			float sd = (float)i / (float)N;
-
-			clouds += exp(-sd * 0.1) * tex2Dlod(sampBaseTex, float4(IN.texcoords + 0.05 * (1 + sd) * (eyeV), 0, 0)).a;
+			clouds += exp(-sd * 0.1) * tex2Dlod(sampBaseTex, float4(IN.texcoords + 0.03 * (1 + sd) * (eyeV), 0, 0)).a;
 		}
 		clouds /= (float)N;
 		clouds = saturate(1-clouds);
