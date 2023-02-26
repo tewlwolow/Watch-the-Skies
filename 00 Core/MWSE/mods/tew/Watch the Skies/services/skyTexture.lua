@@ -11,17 +11,18 @@ local WtC = tes3.worldController.weatherController
 --------------------------------------------------------------------------------------
 
 local weathers = {}
+
 weathers.vanillaWeathers = {
-	[0] = "tx_sky_clear.dds",
-	[1] = "tx_sky_cloudy.dds",
-	[2] = "tx_sky_foggy.dds",
-	[3] = "tx_sky_overcast.dds",
-	[4] = "tx_sky_rainy.dds",
-	[5] = "tx_sky_thunder.dds",
-	[6] = "tx_sky_ashstorm.dds",
-	[7] = "tx_sky_blight.dds",
-	[8] = "tx_bm_sky_snow.dds",
-	[9] = "tx_bm_sky_blizzard.dds"
+	[0] = "tx_sky_clear",
+	[1] = "tx_sky_cloudy",
+	[2] = "tx_sky_foggy",
+	[3] = "tx_sky_overcast",
+	[4] = "tx_sky_rainy",
+	[5] = "tx_sky_thunder",
+	[6] = "tx_sky_ashstorm",
+	[7] = "tx_sky_blight",
+	[8] = "tx_bm_sky_snow",
+	[9] = "tx_bm_sky_blizzard"
 }
 
 weathers.customWeathers = {}
@@ -29,7 +30,24 @@ for i = 0, 9 do
 	weathers.customWeathers[i] = {}
 end
 
+local extensions = {
+	[1] = "dds",
+	[2] = "tga",
+	[3] = "bmp"
+}
+
 --------------------------------------------------------------------------------------
+
+local function addVanilla(index, sky)
+	for _, extension in ipairs(extensions) do
+		local texturePath = string.format("Data Files\\Textures\\%s.%s", sky, extension)
+		if lfs.fileexists(texturePath) then
+			table.insert(weathers.customWeathers[index], texturePath)
+			debugLog("File added: " .. texturePath)
+			break
+		end
+	end
+end
 
 function skyTexture.randomise()
 	local weatherNow
@@ -68,13 +86,7 @@ function skyTexture.init()
 	-- Also pull vanilla textures if needed --
 	if config.useVanillaSkyTextures then
 		for index, sky in pairs(weathers.vanillaWeathers) do
-			local texturePath = "Data Files\\Textures\\" .. sky
-			if lfs.fileexists(texturePath) then
-				table.insert(weathers.customWeathers[index], texturePath)
-				debugLog("File added: " .. texturePath)
-			else
-				mwse.log("[Watch the Skies: ERROR] Vanilla sky texture not found: " .. texturePath)
-			end
+			addVanilla(index, sky)
 		end
 	end
 
