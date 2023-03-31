@@ -9,8 +9,8 @@ local WtC = tes3.worldController.weatherController
 --------------------------------------------------------------------------------------
 
 local particleAmountData = {
-	[4] = { 1500, 1600, 1800, 1950, 2000, 2200, 2500, 2600, 2700, 2800, 2900, 3000 },
-	[5] = { 1700, 1600, 1800, 1950, 2000, 2200, 2500, 2600, 2750, 2800, 3000, 3500, 4000, 4500, 5000 },
+	[4] = { 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2500, 2600, 2700, 2800, 3000 },
+	[5] = { 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2300, 2400, 2500, 2600, 2750, 2800, 3000, 3500, 4000, 4500, 5000 },
 	[8] = { 3000, 3200, 3400, 3600 }
 }
 
@@ -29,8 +29,8 @@ function particleAmount.randomise()
 
 	-- Match the weather index with lua array index --
 	-- Don't want to change currentWeather here --
-	for weather, values in ipairs(particleAmountData) do
-		if (currentWeatherIndex + 1 ~= weather) then
+	for weather, values in pairs(particleAmountData) do
+		if (currentWeatherIndex ~= weather) then
 			WtC.weathers[currentWeatherIndex + 1].maxParticles = table.choice(values)
 		end
 	end
