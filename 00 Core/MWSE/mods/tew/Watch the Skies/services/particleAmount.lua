@@ -31,7 +31,7 @@ function particleAmount.randomise()
 	-- Don't want to change currentWeather here --
 	for weather, values in pairs(particleAmountData) do
 		if (currentWeatherIndex ~= weather) then
-			WtC.weathers[currentWeatherIndex + 1].maxParticles = table.choice(values)
+			WtC.weathers[weather + 1].maxParticles = table.choice(values)
 		end
 	end
 
