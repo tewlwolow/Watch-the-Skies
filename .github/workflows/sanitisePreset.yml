@@ -1,0 +1,37 @@
+name: Sanitise Weather Adjuster preset
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 02 Weather Adjuster preset/MWSE/config/Weather Adjuster.json
+
+jobs:
+  build:
+    name: Sanitise Weather Adjuster preset
+    runs-on: ubuntu-latest
+    env:
+      PRESET: 02 Weather Adjuster preset/MWSE/config/Weather Adjuster.json
+
+  
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    - name: Walk and update JSON
+      run: |
+        jq 'walk(if type == "object" then with_entries( if .key == "cloudTexture" then .value = "" else . end ) else . end)' '${{ env.PRESET }}' > 'Weather Adjuster_sanitised.json' && mv 'Weather Adjuster_sanitised.json' '${{ env.PRESET }}'
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        git add .
+        git diff-index --cached --quiet HEAD ||
+          git commit -am "Sanitised WA Preset"
+          git push origin main
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        username: github-actions
+        
