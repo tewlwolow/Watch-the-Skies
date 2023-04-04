@@ -71,7 +71,7 @@ float4 SkyPS(SkyVertOut IN, float2 vpos : VPOS) : COLOR0 {
 
 		clouds.a = ca.a;
 		float4 incol = IN.color;
-		incol.rgb += (1.5 + sunrim + sunarea2) * (1-sunarea) * smoothstep(0.1,0.5,ca.a);
+        incol.rgb += (1.5 + sunrim + sunarea2) * (1-sunarea) *  2.5 * (sunCol.rgb) * smoothstep(-0.1, 0.1, ca.a);
 
         c = incol * lerp(ca, clouds, sunCol.r);
     }
