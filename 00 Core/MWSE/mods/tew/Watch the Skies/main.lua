@@ -1,9 +1,12 @@
-local modversion = require("tew.Watch the Skies.version")
-local version = modversion.version
+local util = require("tew.Watch the Skies.util")
+local metadata = toml.loadMetadata("Watch the Skies")
 
 local function init()
+	if not (metadata) then
+		util.metadataMissing()
+	end
 	dofile("Data Files\\MWSE\\mods\\tew\\Watch the Skies\\components\\events.lua")
-	mwse.log(string.format("[Watch the Skies] Version %s initialised.", version))
+	mwse.log(string.format("[Watch the Skies] Version %s initialised.", metadata.package.version))
 end
 
 event.register(tes3.event.initialized, init, { priority = -150 })

@@ -1,7 +1,6 @@
 local configPath = "Watch the Skies"
 local config = require("tew.Watch the Skies.config")
-local modversion = require("tew.Watch the Skies.version")
-local version = modversion.version
+local metadata = toml.loadMetadata("Watch the Skies")
 
 local template = mwse.mcm.createTemplate {
     name = "Watch the Skies",
@@ -10,7 +9,7 @@ local template = mwse.mcm.createTemplate {
 
 local page = template:createPage { label = "Main Settings" }
 page:createCategory {
-    label = "Watch the Skies " .. version .. " by tewlwolow.\nLua-based weather overhaul.\n\nSettings:"
+    label = "Watch the Skies " .. metadata.package.version .. " by tewlwolow.\n" .. metadata.package.description .."\n\nSettings:"
 }
 
 local function createYesNoButton(label, id, restartRequired)

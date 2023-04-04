@@ -1,8 +1,7 @@
 local common = {}
 local config = require("tew.Watch the Skies.config")
 local debugLogOn = config.debugLogOn
-local modversion = require("tew.Watch the Skies.version")
-local version = modversion.version
+local metadata = toml.loadMetadata("Watch the Skies")
 
 common.centralTimerDuration = 8
 
@@ -11,7 +10,7 @@ function common.debugLog(message)
 
     local info = debug.getinfo(2, "Sl")
     local module = info.short_src:match("^.+\\(.+).lua$")
-    local prepend = ("[Watch the Skies.%s.%s:%s]:"):format(version, module, info.currentline)
+    local prepend = ("[Watch the Skies.%s.%s:%s]:"):format(metadata.package.version, module, info.currentline)
     local aligned = ("%-36s"):format(prepend)
     mwse.log(aligned .. " -- " .. string.format("%s", message))
 end
