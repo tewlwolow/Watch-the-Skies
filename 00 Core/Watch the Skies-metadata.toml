@@ -1,0 +1,23 @@
+[package]
+name = "Watch the Skies"
+description = "Lua-based weather overhaul mod for Morrowind."
+homepage = "https://www.nexusmods.com/morrowind/mods/48636"
+repository = "https://github.com/tewlwolow/Watch-the-Skies"
+authors = ["tewlwolow"]
+version = "4.3.2"
+
+[tools.mwse]
+lua-mod = "tew.Watch the Skies"
+wait-until-initialize = false
+
+[dependencies]
+assets = [
+	"Textures\\tew\\Watch the Skies",
+	"Meshes\\tew\\Watch the Skies"
+]
+
+[dependencies.mwse]
+buildnumber = 3150
+
+[dependencies.mge-xe]
+version = ">=0.15.1"
