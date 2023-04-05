@@ -64,14 +64,14 @@ float4 SkyPS(SkyVertOut IN, float2 vpos : VPOS) : COLOR0 {
 		float4 tur2 = tex2Dlod(sampBaseTex, float4(IN.texcoords * 5.1 - time * 0.01, 0, 0));
 
 		float4 ca = tex2Dlod(sampBaseTex, float4(IN.texcoords + 0.02 * tur.r  * tur2.a , 0, 0));
-		clouds.rgb = lerp(saturate(sunAmb * 2), sunCol + 0.8, clouds.rgb);
+		clouds.rgb = lerp(saturate(sunAmb * 2), sunCol + 0.9, clouds.rgb);
 		//clouds.rgb = clouds.rgb * sunarea + sunrim * sunarea;
 
 		clouds.rgb = ca.rgb * clouds.rgb * ca.a;
 
 		clouds.a = ca.a;
 		float4 incol = IN.color;
-        incol.rgb += (1.5 + sunrim + sunarea2) * (1-sunarea) *  2.7 * (sunCol.rgb) * smoothstep(-0.1, 0.1, ca.a);
+        incol.rgb += (1.5 + sunrim + sunarea2) * (1-sunarea) *  2.6 * (sunCol.rgb) * smoothstep(-0.1, 0.1, ca.a);
 
         c = incol * lerp(ca, clouds, sunCol.r);
     }
