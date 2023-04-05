@@ -1,15 +1,16 @@
-local configPath = "Watch the Skies"
-local config = require("tew.Watch the Skies.config")
 local metadata = toml.loadMetadata("Watch the Skies")
+local configPath = metadata.package.name
+local config = require("tew.Watch the Skies.config")
+
 
 local template = mwse.mcm.createTemplate {
-    name = "Watch the Skies",
+    name = metadata.package.name,
     headerImagePath = "\\Textures\\tew\\Watch the Skies\\WtS_logo.tga"
 }
 
 local page = template:createPage { label = "Main Settings" }
 page:createCategory {
-    label = "Watch the Skies " .. metadata.package.version .. " by tewlwolow.\n" .. metadata.package.description .."\n\nSettings:"
+    label = metadata.package.name .. " " .. metadata.package.version .. " by tewlwolow.\n" .. metadata.package.description .."\n\nSettings:"
 }
 
 local function createYesNoButton(label, id, restartRequired)
