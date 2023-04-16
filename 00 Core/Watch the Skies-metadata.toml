@@ -20,4 +20,4 @@ assets = [
 buildnumber = 3150
 
 [dependencies.mge-xe]
-version = "^0.16.0"
+version = ">=0.16.0"
