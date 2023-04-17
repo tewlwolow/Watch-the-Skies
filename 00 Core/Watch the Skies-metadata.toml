@@ -4,7 +4,7 @@ description = "Lua-based weather overhaul mod for Morrowind."
 homepage = "https://www.nexusmods.com/morrowind/mods/48636"
 repository = "https://github.com/tewlwolow/Watch-the-Skies"
 authors = ["tewlwolow"]
-version = "4.3.2"
+version = "4.3.3"
 
 [tools.mwse]
 lua-mod = "tew.Watch the Skies"
