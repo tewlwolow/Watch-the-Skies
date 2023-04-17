@@ -19,6 +19,7 @@ function interiorTransitions.progress()
 
 	-- Use regional weather chances --
 	local region = tes3.getRegion(true)
+	if not region then return end
 	local regionChances = region.weatherChances
 
 	-- Get the new weather --

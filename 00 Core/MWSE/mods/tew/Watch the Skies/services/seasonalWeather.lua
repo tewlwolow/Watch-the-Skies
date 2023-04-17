@@ -56,6 +56,7 @@ function seasonalWeather.calculate()
 	-- Get month and region and buzz off if there's no change --
 	local month = tes3.worldController.month.value + 1
 	local regionNow = tes3.getRegion(true)
+	if not regionNow then return end
 	if (month == monthLast) and (regionNow == regionLast) then debugLog("Same month and region. Returning.") return end
 
 	-- If either month or region has changes, we need to reapply values--
@@ -91,7 +92,7 @@ function seasonalWeather.calculate()
 				region.weatherChanceBlight = seasonalChances[region.id][month][8]
 				region.weatherChanceSnow = seasonalChances[region.id][month][9]
 				region.weatherChanceBlizzard = seasonalChances[region.id][month][10]
-				
+
 				-- Disable the blight cloud object from Dagoth Ur volcano --
 				mwscript.disable { reference = "blight cloud" }
 			end
@@ -158,7 +159,7 @@ function seasonalWeather.calculate()
 			end
 		end
 	end
-	
+
 	-- Write month and region off for later comparison --
 	monthLast = month
 	regionLast = regionNow
