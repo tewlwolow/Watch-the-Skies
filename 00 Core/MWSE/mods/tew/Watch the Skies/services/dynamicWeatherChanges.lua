@@ -13,7 +13,8 @@ function dynamicWeatherChanges.init()
 end
 
 function dynamicWeatherChanges.randomise()
-	WtC.hoursBetweenWeatherChanges = math.random(3, 10)
+	local hours = math.random(3, 10)
+	WtC.hoursBetweenWeatherChanges = hours
 	debugLog("Current time between weather changes: " .. WtC.hoursBetweenWeatherChanges)
 end
 
