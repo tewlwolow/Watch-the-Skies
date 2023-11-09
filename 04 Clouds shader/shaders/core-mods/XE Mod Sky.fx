@@ -77,24 +77,24 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 // Pixel cloud shader
 
 // Controls the initial displacement when sampling cloud textures
-float disSample = 0.02;
+float disSample = 0.01;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 8.1;
-float dis2 = 4.1;
-float dis3 = 0.021;
+float dis1 = 9.1;
+float dis2 = 5.1;
+float dis3 = 0.018;
 
 // Controls the time factor for displacement. Higher = faster
 float timeFactor = 0.008;
 
 // Controls additional sun colour saturation for the clouds. Higher = more sun colour influence
-float sunColSat = 0.6;
+float sunColSat = 0.8;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.5;
+float incolFactor = 0.52;
 
 
 // Pixel cloud shader
