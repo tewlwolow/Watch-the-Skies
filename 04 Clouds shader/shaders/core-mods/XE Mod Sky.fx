@@ -146,14 +146,14 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     clouds.a = ca.a;
 
     // Calc sunlight coefficients
-    float sunrim = clouds.r - 0.1;
+    float sunrim = clouds.r - 0.4;
     float sund = max(0,dot(eyeV, normalize(sunPos)));
-    float sunarea = (1 - pow(sund, 52));
-    float sunarea2 = (1 - pow(sund, 11105));
+    float sunarea = (1 - pow(sund, 64));
+    float sunarea2 = (1 - pow(sund, 12105));
 
     // Create a 'halo' effect by adjusting input color
     float4 incol = IN.color;
-    incol.rgb += (1.5 + sunrim + sunarea2) * (1 - sunarea) * smoothstep(0.1, 0.5, ca.a);
+    incol.rgb += (1.2 + sunrim + sunarea2) * (1 - sunarea) * smoothstep(0.1, 0.5, ca.a);
 
     // Combine input color with the lerped cloud color based on sun color
     c = incol * lerp(ca, clouds, sunCol.r * incolFactor);
