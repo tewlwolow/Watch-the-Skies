@@ -77,23 +77,20 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 // Pixel cloud shader
 
 // Controls the initial displacement when sampling cloud textures
-float disSample = 0.01;
+float disSample = 0.02;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 4.2;
-float dis3 = 0.0068;
+float dis1 = 5.6;
+float dis3 = 0.0082;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.0018;
-
-// Controls additional sun colour saturation for the clouds. Higher = more sun colour influence
-float sunColSat = 0.8;
+float timeFactor = 0.0063;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.52;
+float incolFactor = 0.57;
 
 
 // Pixel cloud shader
@@ -124,15 +121,8 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     // Sample main cloud texture with displacement
     float4 ca = tex2Dlod(sampBaseTex, float4(IN.texcoords - dis3 * tur.r * tur2.a, 0, 0));
 
-    // Apply a light blur to the displacement map
-    float blurAmount = 0.006; // Adjust the blur amount as needed
-    float4 blurredCa = tex2Dlod(sampBaseTex, float4(IN.texcoords + blurAmount * (tur.r + tur2.a), 0, 0));
-
-    // Interpolate between the original and blurred displacement
-    ca.rgb = lerp(ca.rgb, blurredCa.rgb, 0.2); // Adjust the interpolation factor as needed
-
     // Adjust cloud color based on sun and ambient light
-    clouds.rgb = lerp(saturate(sunAmb * sunAmbMult), sunCol + sunColSat, clouds.rgb);
+    clouds.rgb = lerp(saturate(sunAmb * sunAmbMult), sunCol, clouds.rgb);
 
     // Get fogColourSky
     float4 fogColor = fogColourSky(normalize(IN.skypos.xyz));
