@@ -119,11 +119,11 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     clouds = saturate(1 - clouds);
 
     // Sample additional cloud textures for displacement
-    float4 tur = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis1 + float2(time * timeFactor, time * (timeFactor + 0.002)), 0, 0));
-    float4 tur2 = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis2 + float2(time * timeFactor, time * (timeFactor + 0.0023)), 0, 0));
+    float4 tur = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis1 - float2(time * timeFactor, time * (timeFactor + 0.002)), 0, 0));
+    float4 tur2 = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis2 - float2(time * timeFactor, time * (timeFactor + 0.0023)), 0, 0));
 
     // Sample main cloud texture with displacement
-    float4 ca = tex2Dlod(sampBaseTex, float4(IN.texcoords + dis3 * tur.r * tur2.a, 0, 0));
+    float4 ca = tex2Dlod(sampBaseTex, float4(IN.texcoords - dis3 * tur.r * tur2.a, 0, 0));
 
     // Apply a light blur to the displacement map
     float blurAmount = 0.006; // Adjust the blur amount as needed
