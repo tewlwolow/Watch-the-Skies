@@ -80,8 +80,8 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 float disSample = 0.02;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 5.6;
-float dis3 = 0.0082;
+float dis1 = 8.6;
+float dis3 = 0.0096;
 
 // Controls the time factor for displacement. Higher = faster
 float timeFactor = 0.0063;
@@ -90,7 +90,7 @@ float timeFactor = 0.0063;
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.57;
+float incolFactor = 0.38;
 
 
 // Pixel cloud shader
@@ -115,7 +115,7 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     clouds = saturate(1 - clouds);
 
     // Sample additional cloud textures for displacement
-    float4 tur = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis1 - float2(time * timeFactor, time * (timeFactor + 0.002)), 0, 0));
+    float4 tur = tex2Dlod(sampBaseTex, float4(IN.texcoords * dis1 - float2(time * timeFactor, time * timeFactor), 0, 0));
     float4 tur2 = tur/2;
 
     // Sample main cloud texture with displacement
@@ -128,7 +128,7 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 fogColor = fogColourSky(normalize(IN.skypos.xyz));
 
     // Blend fog color with cloud color so we keep the influence of fog colour on clouds
-    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, fogColor.a);
+    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, 0.6);
 
     // Multiply by sun-influenced color, preserving alpha
     clouds.rgb = ca.rgb * clouds.rgb * ca.a;
