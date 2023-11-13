@@ -56,7 +56,7 @@ local services = {
 			local interiorTransitions = require("tew.Watch the Skies.services.interiorTransitions")
 			event.register(tes3.event.cellChanged, interiorTransitions.onCellChanged, { priority = -150 })
 		end,
-	}
+	},
 }
 
 for serviceName, service in pairs(services) do
