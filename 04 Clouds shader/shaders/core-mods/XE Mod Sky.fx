@@ -90,7 +90,7 @@ float timeFactor = 0.0063;
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.38;
+float incolFactor = 0.3;
 
 
 // Pixel cloud shader
@@ -128,7 +128,7 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 fogColor = fogColourSky(normalize(IN.skypos.xyz));
 
     // Blend fog color with cloud color so we keep the influence of fog colour on clouds
-    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, 0.6);
+    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, 0.65);
 
     // Multiply by sun-influenced color, preserving alpha
     clouds.rgb = ca.rgb * clouds.rgb * ca.a;
@@ -136,13 +136,13 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
 
     // Calc sunlight coefficients
     float sunrim = clouds.r - 0.4;
-    float sund = max(0,dot(eyeV, normalize(sunPos)));
-    float sunarea = (1 - pow(sund, 64));
-    float sunarea2 = (1 - pow(sund, 12105));
+    float sund = max(0, dot(eyeV, normalize(sunPos)));
+    float sunarea = (1 - pow(sund, 52));
+    float sunarea2 = sunarea/12;
 
     // Create a 'halo' effect by adjusting input color
     float4 incol = IN.color;
-    incol.rgb += (1.2 + sunrim + sunarea2) * (1 - sunarea) * smoothstep(0.1, 0.5, ca.a);
+    incol.rgb += (1.2 + sunrim + sunarea2) * (1 - sunarea) * ca.a;
 
     // Combine input color with the lerped cloud color based on sun color
     c = incol * lerp(ca, clouds, sunCol.r * incolFactor);
