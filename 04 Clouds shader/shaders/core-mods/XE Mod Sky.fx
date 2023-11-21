@@ -75,6 +75,7 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 
 //------------
 // Pixel cloud shader
+// Clouds rendering from XE Mod Sky by Dexter (vtastek) ported to MGE XE >= 0.16.0 and edited by tewlwolow
 
 // Controls the initial displacement when sampling cloud textures
 float disSample = 0.02;
@@ -91,10 +92,6 @@ float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
 float incolFactor = 0.3;
-
-
-// Pixel cloud shader
-// Clouds rendering from XE Mod Sky by Dexter (vtastek) ported to MGE XE >= 0.16.0 and edited by tewlwolow
 
 float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 c = 0; // Final color output
