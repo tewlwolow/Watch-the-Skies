@@ -81,22 +81,22 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 float disSample = 0.02;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 8.7;
-float dis3 = 0.0098;
+float dis1 = 6.7;
+float dis3 = 0.0095;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.0067;
+float timeFactor = 0.0071;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.42;
+float incolFactor = 0.4;
 
 float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 c = 0; // Final color output
     float4 clouds = 0; // Accumulated cloud color
-    int N = 8; // Number of iterations for cloud sampling
+    int N = 4; // Number of iterations for cloud sampling
     float3 eyeV = normalize(IN.skypos.xyz); // Normalized eye vector
 
     // Iterate for cloud sampling
@@ -125,21 +125,21 @@ float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 fogColor = fogColourSky(normalize(IN.skypos.xyz));
 
     // Blend fog color with cloud color so we keep the influence of fog colour on clouds
-    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, 0.7);
+    clouds.rgb = lerp(clouds.rgb, fogColor.rgb, 0.8);
 
     // Multiply by sun-influenced color, preserving alpha
     clouds.rgb = ca.rgb * clouds.rgb * ca.a;
     clouds.a = ca.a;
 
     // Calc sunlight coefficients
-    float sunrim = clouds.r - 0.3;
+    float sunrim = clouds.r - 0.2;
     float sund = max(0, dot(eyeV, normalize(sunPos)));
     float sunarea = (1 - pow(sund, 52));
     float sunarea2 = sunarea/12;
 
     // Create a 'halo' effect by adjusting input color
     float4 incol = IN.color;
-    incol.rgb += (1.2 + sunrim + sunarea2) * (1 - sunarea) * ca.a;
+    incol.rgb += (0.85 + sunrim + sunarea2) * (1 - sunarea) * ca.a;
 
     // Combine input color with the lerped cloud color based on sun color
     c = incol * lerp(ca, clouds, sunCol.r * incolFactor);
