@@ -5,22 +5,22 @@
 int mgeflags = 9;
 
 // tweakables
-#define N 25                     // Number of iterations
-#define raysunradius 0.45         // Radius around sun center that emits rays
-#define raystrength 1.4          // Brightness of sun rays
-#define rayfalloff 1.10          // Falloff of sun rays
-#define rayfalloffconst 0.13    // Increase to increase minimum 'length' of sun rays
-#define raysunfalloff 1.4        // Ray strength falloff exponent
-#define centervis 0.3            // Ray opacity at center of sun
-#define sunrayocclude 0.85       // How much sun rays will 'overwrite' original image
-#define brightnessadd 1.1        // Additional sun ray color brightness for very bright rays
-#define offscreenrange 0.5       // Maximum offscreen position of sun before rays vanish
-#define sundisc 1                // Draws additional sun disc. 0 disables
-#define sundiscradius 0.026      // Radius of sun disc
-#define sundiscbrightness 1.1    // Brightness of sun disc
-#define sundiscdesaturate 0.75   // Desaturation of sun disc color, negative values for more saturation
-#define sundiscocclude 0.7      // How much the sun disc will 'overwrite' original image
-#define horizonclipping 1        // Prevents the sun disc from being drawn below the horizon. Might cause an FPS hit.
+#define N 25                    // Number of iterations
+#define raysunradius 0.36       // Radius around sun center that emits rays
+#define raystrength 1.85        // Brightness of sun rays
+#define rayfalloff 1.7          // Falloff of sun rays
+#define rayfalloffconst 0.21    // Increase to increase minimum 'length' of sun rays
+#define raysunfalloff 1.8       // Ray strength falloff exponent
+#define centervis 0.3           // Ray opacity at center of sun
+#define sunrayocclude 0.80      // How much sun rays will 'overwrite' original image
+#define brightnessadd 1.15      // Additional sun ray color brightness for very bright rays
+#define offscreenrange 0.8      // Maximum offscreen position of sun before rays vanish
+#define sundisc 1               // Draws additional sun disc. 0 disables
+#define sundiscradius 0.027     // Radius of sun disc
+#define sundiscbrightness 1.3   // Brightness of sun disc
+#define sundiscdesaturate 0.7   // Desaturation of sun disc color, negative values for more saturation
+#define sundiscocclude 0.73     // How much the sun disc will 'overwrite' original image
+#define horizonclipping 1       // Prevents the sun disc from being drawn below the horizon. Might cause an FPS hit.
 // end
 
 texture depthframe;
