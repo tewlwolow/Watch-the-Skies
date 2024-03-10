@@ -15,13 +15,13 @@ local RAIN_POINT = 0.1
 
 local particles = {
 	["rain"] = {},
-	["snow"] = {}
+	["snow"] = {},
 }
 
 local weatherChecklist = {
 	["Rain"] = "rain",
 	["Thunderstorm"] = "rain",
-	["Snow"] = "snow"
+	["Snow"] = "snow",
 }
 
 --------------------------------------------------------------------------------------
@@ -48,13 +48,13 @@ function particleMesh.getModifiedColour(weatherColour)
 		colours = {
 			r = getBleachedColour(weatherColour.r, SNOW_POINT),
 			g = getBleachedColour(weatherColour.g, SNOW_POINT),
-			b = getBleachedColour(weatherColour.b, SNOW_POINT)
+			b = getBleachedColour(weatherColour.b, SNOW_POINT),
 		}
 	else
 		colours = {
 			r = getBleachedColour(weatherColour.r, RAIN_POINT),
 			g = getBleachedColour(weatherColour.g, RAIN_POINT),
-			b = getBleachedColour(weatherColour.b, RAIN_POINT)
+			b = getBleachedColour(weatherColour.b, RAIN_POINT),
 		}
 	end
 	return colours
@@ -78,7 +78,8 @@ end
 
 function particleMesh.isValidWeather()
 	return (WtC.currentWeather.name == "Rain" or WtC.currentWeather.name == "Thunderstorm" or WtC.currentWeather.name == "Snow")
-	and ((not WtC.nextWeather) or (WtC.nextWeather.name == "Rain" or WtC.nextWeather.name == "Thunderstorm" or WtC.nextWeather.name == "Snow"))
+		and
+		((not WtC.nextWeather) or (WtC.nextWeather.name == "Rain" or WtC.nextWeather.name == "Thunderstorm" or WtC.nextWeather.name == "Snow"))
 end
 
 local function swapNode(particle)
@@ -95,9 +96,10 @@ end
 -- Get a new mesh and swap nodes --
 function particleMesh.changeParticleMesh(particleType)
 	local randomParticleMesh = table.choice(particles[particleType])
-	newParticleMesh = tes3.loadMesh("tew\\Watch the Skies\\particles\\" .. particleType .. "\\" .. randomParticleMesh):clone()
+	newParticleMesh = tes3.loadMesh("tew\\Watch the Skies\\particles\\" .. particleType .. "\\" .. randomParticleMesh)
+	:clone()
 
-	local particleTables = {WtC.particlesActive, WtC.particlesInactive}
+	local particleTables = { WtC.particlesActive, WtC.particlesInactive }
 	for _, particleTable in pairs(particleTables) do
 		for _, particle in pairs(particleTable) do
 			swapNode(particle)
@@ -110,29 +112,12 @@ end
 
 -- Check if we have the weather that warrants particle change --
 function particleMesh.particleMeshChecker()
-	local weatherNow
-	if WtC.nextWeather then
-		weatherNow = WtC.nextWeather
-		local particleWeatherType = weatherChecklist[weatherNow.name]
-		if particleWeatherType ~= nil then
-			timer.start {
-				duration = 0.2,
-				callback = function()
-					particleMesh.changeParticleMesh(particleWeatherType)
-				end,
-				type = timer.game,
-			}
-		end
-	else
-		weatherNow = WtC.currentWeather
-		local particleWeatherType = weatherChecklist[weatherNow.name]
-		if particleWeatherType ~= nil then
-			particleMesh.changeParticleMesh(particleWeatherType)
-		end
+	local weatherNow = WtC.nextWeather and WtC.nextWeather or WtC.currentWeather
+	local particleWeatherType = weatherChecklist[weatherNow.name]
+	if particleWeatherType ~= nil then
+		particleMesh.changeParticleMesh(particleWeatherType)
 	end
 end
-
-
 
 --------------------------------------------------------------------------------------
 
