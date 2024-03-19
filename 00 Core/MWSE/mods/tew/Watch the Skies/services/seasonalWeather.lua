@@ -32,24 +32,58 @@ end
 
 function seasonalWeather.getMQState()
 	local journalEntries = {
-		["C3_DestroyDagoth"] = 0,
-		["A1_2_AntabolisInformant"] = 1,
-		["A1_11_ZainsubaniInformant"] = 2,
-		["A2_2_6thHouse"] = 3,
-		["A2_3_CorprusCure"] = 4,
-		["A2_6_Incarnate"] = 5,
-		["B8_MeetVivec"] = 6,
-		["CX_BackPath"] = 6,
+		[1] = {
+			id = "C3_DestroyDagoth",
+			blightChance = 0,
+		},
+		[2] = {
+			id = "B8_MeetVivec",
+			blightChance = 50,
+		},
+		[3] = {
+			id = "CX_BackPath",
+			blightChance = 50,
+		},
+		[4] = {
+			id = "A2_6_Incarnate",
+			blightChance = 30,
+		},
+		[5] = {
+			id = "A2_4_MiloGone",
+			blightChance = 15,
+		},
+		[6] = {
+			id = "A2_3_CorprusCure",
+			blightChance = 10,
+		},
+		[7] = {
+			id = "A2_2_6thHouse",
+			blightChance = 8,
+		},
+		[8] = {
+			id = "A2_1_MeetSulMatuul",
+			blightChance = 5,
+		},
+		[9] = {
+			id = "A1_11_ZainsubaniInformant",
+			blightChance = 3,
+		},
+		[10] = {
+			id = "A1_2_AntabolisInformant",
+			blightChance = 2,
+		},
 	}
 
-	local questStage = 0
-	for id, stage in pairs(journalEntries) do
-		local index = tes3.getJournalIndex { id = id }
+	local blightChance = 0
+	for _, entry in ipairs(journalEntries) do
+		debugLog("Quest: " .. entry.id .. ", blight chance: " .. entry.blightChance)
+		local index = tes3.getJournalIndex { id = entry.id }
 		if index >= 50 then
-			questStage = math.max(questStage, stage)
+			blightChance = entry.blightChance
+			break
 		end
 	end
-	return questStage
+	return blightChance
 end
 
 function seasonalWeather.calculate()
@@ -62,14 +96,14 @@ function seasonalWeather.calculate()
 		return
 	end
 
-	-- If either month or region has changes, we need to reapply values--
+	-- If either month or region has changed, we need to reapply values--
 	-- Get the current MQ state to use in Blight calculations --
 	local questStage = seasonalWeather.getMQState()
-	debugLog("Main quest stage: " .. questStage)
+	debugLog("Selected blight chance: " .. questStage)
 
 	-- Iterate over all current regions and amend values if we get a much against our table --
 	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
-		-- Special handling for Red Mountain - use eithre full Blight or normal regional weather after MQ --
+		-- Special handling for Red Mountain - use either full Blight or normal regional weather after MQ --
 		if region.id == "Red Mountain Region" then
 			if tes3.getJournalIndex { id = "C3_DestroyDagoth" } < 20 then
 				debugLog("Dagoth Ur is alive. Using full blight values for Red Mountain.")
@@ -186,6 +220,7 @@ end
 
 function seasonalWeather.startTimer()
 	monthLast, regionLast = nil, nil
+	seasonalWeather.calculate()
 	timer.start {
 		duration = common.centralTimerDuration,
 		callback = seasonalWeather.calculate,
