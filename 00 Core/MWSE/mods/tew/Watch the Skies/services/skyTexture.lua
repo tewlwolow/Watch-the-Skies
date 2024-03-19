@@ -22,7 +22,7 @@ weathers.vanillaWeathers = {
 	[6] = "tx_sky_ashstorm",
 	[7] = "tx_sky_blight",
 	[8] = "tx_bm_sky_snow",
-	[9] = "tx_bm_sky_blizzard"
+	[9] = "tx_bm_sky_blizzard",
 }
 
 weathers.customWeathers = {}
@@ -33,7 +33,7 @@ end
 local extensions = {
 	[1] = "dds",
 	[2] = "tga",
-	[3] = "bmp"
+	[3] = "bmp",
 }
 
 --------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ function skyTexture.randomise()
 	debugLog("Starting cloud texture randomisation.")
 	for index, weather in ipairs(WtC.weathers) do
 		if (weatherNow) and (weatherNow.index == index) then goto continue end
-		local textureList = weathers.customWeathers[index-1]
+		local textureList = weathers.customWeathers[index - 1]
 		local i = math.random(#textureList)
 		local texturePath = textureList[i]
 		weather.cloudTexture = texturePath
@@ -89,17 +89,15 @@ function skyTexture.init()
 			addVanilla(index, sky)
 		end
 	end
-
-	-- Initially shuffle the cloud textures --
-	skyTexture.randomise()
 end
 
 function skyTexture.startTimer()
-	timer.start{
+	skyTexture.randomise()
+	timer.start {
 		duration = common.centralTimerDuration,
 		callback = skyTexture.randomise,
 		iterations = -1,
-		type = timer.game
+		type = timer.game,
 	}
 end
 

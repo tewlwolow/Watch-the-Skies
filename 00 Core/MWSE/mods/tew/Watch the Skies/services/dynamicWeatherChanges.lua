@@ -19,11 +19,12 @@ function dynamicWeatherChanges.randomise()
 end
 
 function dynamicWeatherChanges.startTimer()
-	timer.start{
+	dynamicWeatherChanges.randomise()
+	timer.start {
 		duration = common.centralTimerDuration,
 		callback = dynamicWeatherChanges.randomise,
 		iterations = -1,
-		type = timer.game
+		type = timer.game,
 	}
 end
 

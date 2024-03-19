@@ -20,13 +20,13 @@ function seasonalDaytime.calculate()
 	local day = tes3.worldController.day.value
 
 	--- Constants --
-	local southY = -400000 -- Max "south pole" value - default -400000 (approximately Old Morrowind-Argonia border) --
-	local northY = 225000 -- Max "north pole" value - 225000 is slightly north of Castle Karstaag
-	local minDaytime = 4.0 -- Minimum daytime duration
+	local southY = -400000   -- Max "south pole" value - default -400000 (approximately Old Morrowind-Argonia border) --
+	local northY = 225000    -- Max "north pole" value - 225000 is slightly north of Castle Karstaag
+	local minDaytime = 4.0   -- Minimum daytime duration
 	local solsticeSunrise = 6.0 -- Sunrise hours at 0 world position for solstice
 	local solsticeSunset = 18.0 -- Sunset hour at 0 world position for solstice
-	local durSunrise = 2.0 -- Sunrise duration
-	local durSunset = 2.0 -- Sunset duration
+	local durSunrise = 2.0   -- Sunrise duration
+	local durSunset = 2.0    -- Sunset duration
 
 	-- Local variables --
 	local adjustedSunrise, adjustedSunset, l1, f1, f2, f3 -- Adjusted values and coefficients
@@ -87,21 +87,24 @@ function seasonalDaytime.calculate()
 		WtC.sunsetDuration == math.ceil(durSunset) then
 		debugLog("No change in daytime hours. Returning.")
 	else
-		debugLog("Previous values: " .. WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
+		debugLog("Previous values: " ..
+		WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
 		WtC.sunriseHour = math.ceil(adjustedSunrise)
 		WtC.sunsetHour = math.ceil(adjustedSunset)
 		WtC.sunriseDuration = math.ceil(durSunrise)
 		WtC.sunsetDuration = math.ceil(durSunset)
-		debugLog("Current values: " .. WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
+		debugLog("Current values: " ..
+		WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
 	end
 end
 
 function seasonalDaytime.startTimer()
-	timer.start{
+	seasonalDaytime.calculate()
+	timer.start {
 		duration = common.centralTimerDuration,
 		callback = seasonalDaytime.calculate,
 		iterations = -1,
-		type = timer.game
+		type = timer.game,
 	}
 end
 

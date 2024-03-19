@@ -11,7 +11,7 @@ local WtC = tes3.worldController.weatherController
 local particleAmountData = {
 	[4] = { 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2500, 2600, 2700, 2800, 3000 },
 	[5] = { 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2300, 2400, 2500, 2600, 2750, 2800, 3000, 3500, 4000, 4500, 5000 },
-	[8] = { 1500, 1700, 2100, 2300, 2800, 3000, 3300, 3500 }
+	[8] = { 1500, 1700, 2100, 2300, 2800, 3000, 3300, 3500 },
 }
 
 --------------------------------------------------------------------------------------
@@ -44,11 +44,12 @@ function particleAmount.randomise()
 end
 
 function particleAmount.startTimer()
-	timer.start{
+	particleAmount.randomise()
+	timer.start {
 		duration = common.centralTimerDuration,
 		callback = particleAmount.randomise,
 		iterations = -1,
-		type = timer.game
+		type = timer.game,
 	}
 end
 
