@@ -17,7 +17,7 @@ local vvRegions = {
 	"West Gash Region",
 	"Ascadian Isles Region",
 	"Grazelands Region",
-	"Sheogorad"
+	"Sheogorad",
 }
 
 --------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ function seasonalWeather.getMQState()
 		["A2_3_CorprusCure"] = 4,
 		["A2_6_Incarnate"] = 5,
 		["B8_MeetVivec"] = 6,
-		["CX_BackPath"] = 6
+		["CX_BackPath"] = 6,
 	}
 
 	local questStage = 0
@@ -57,7 +57,10 @@ function seasonalWeather.calculate()
 	local month = tes3.worldController.month.value + 1
 	local regionNow = tes3.getRegion(true)
 	if not regionNow then return end
-	if (month == monthLast) and (regionNow == regionLast) then debugLog("Same month and region. Returning.") return end
+	if (month == monthLast) and (regionNow == regionLast) then
+		debugLog("Same month and region. Returning.")
+		return
+	end
 
 	-- If either month or region has changes, we need to reapply values--
 	-- Get the current MQ state to use in Blight calculations --
@@ -98,13 +101,13 @@ function seasonalWeather.calculate()
 			end
 			-- Special handling of Mournhold weather machine --
 		elseif region.id == "Mournhold Region"
-		and tes3.findGlobal("MournWeather").value == 1
-		or tes3.findGlobal("MournWeather").value == 2
-		or tes3.findGlobal("MournWeather").value == 3
-		or tes3.findGlobal("MournWeather").value == 4
-		or tes3.findGlobal("MournWeather").value == 5
-		or tes3.findGlobal("MournWeather").value == 6
-		or tes3.findGlobal("MournWeather").value == 7 then
+			and tes3.findGlobal("MournWeather").value == 1
+			or tes3.findGlobal("MournWeather").value == 2
+			or tes3.findGlobal("MournWeather").value == 3
+			or tes3.findGlobal("MournWeather").value == 4
+			or tes3.findGlobal("MournWeather").value == 5
+			or tes3.findGlobal("MournWeather").value == 6
+			or tes3.findGlobal("MournWeather").value == 7 then
 			debugLog("Weather machine running: " .. tes3.findGlobal("MournWeather").value)
 			region.weatherChanceClear = 0
 			region.weatherChanceCloudy = 0
@@ -164,30 +167,30 @@ function seasonalWeather.calculate()
 	monthLast = month
 	regionLast = regionNow
 	debugLog(
-	string.format(
-	"Current chances for region: %s are %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-	regionNow.name,
-	regionNow.weatherChanceClear,
-	regionNow.weatherChanceCloudy,
-	regionNow.weatherChanceFoggy,
-	regionNow.weatherChanceOvercast,
-	regionNow.weatherChanceRain,
-	regionNow.weatherChanceThunder,
-	regionNow.weatherChanceAsh,
-	regionNow.weatherChanceBlight,
-	regionNow.weatherChanceSnow,
-	regionNow.weatherChanceBlizzard
-)
-)
+		string.format(
+			"Current chances for region: %s are %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+			regionNow.name,
+			regionNow.weatherChanceClear,
+			regionNow.weatherChanceCloudy,
+			regionNow.weatherChanceFoggy,
+			regionNow.weatherChanceOvercast,
+			regionNow.weatherChanceRain,
+			regionNow.weatherChanceThunder,
+			regionNow.weatherChanceAsh,
+			regionNow.weatherChanceBlight,
+			regionNow.weatherChanceSnow,
+			regionNow.weatherChanceBlizzard
+		)
+	)
 end
 
 function seasonalWeather.startTimer()
 	monthLast, regionLast = nil, nil
-	timer.start{
+	timer.start {
 		duration = common.centralTimerDuration,
 		callback = seasonalWeather.calculate,
 		iterations = -1,
-		type = timer.game
+		type = timer.game,
 	}
 end
 
