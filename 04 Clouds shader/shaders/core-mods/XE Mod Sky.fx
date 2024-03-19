@@ -81,11 +81,11 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 float disSample = 0.02;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 6.7;
-float dis3 = 0.0095;
+float dis1 = 7.0;
+float dis3 = 0.012;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.0071;
+float timeFactor = 0.0088;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
