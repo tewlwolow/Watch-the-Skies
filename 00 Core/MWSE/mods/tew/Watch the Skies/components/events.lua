@@ -36,7 +36,7 @@ local services = {
 	cloudSpeed = {
 		init = function()
 			local cloudSpeed = require("tew.Watch the Skies.services.cloudSpeed")
-			cloudSpeed.init()
+			event.register(tes3.event.loaded, cloudSpeed.startTimer)
 		end,
 	},
 	seasonalWeather = {
