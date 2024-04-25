@@ -1,0 +1,9 @@
+# Vanilla textures for testing purposes
+01 Clouds textures/Textures/tew/Watch the Skies/blight/Tx_Sky_Blight.dds
+01 Clouds textures/Textures/tew/Watch the Skies/clear/Tx_Sky_Clear.dds
+01 Clouds textures/Textures/tew/Watch the Skies/cloudy/Tx_Sky_Cloudy.dds
+01 Clouds textures/Textures/tew/Watch the Skies/overcast/Tx_Sky_Overcast.dds
+01 Clouds textures/Textures/tew/Watch the Skies/rain/Tx_Sky_Rainy.dds
+01 Clouds textures/Textures/tew/Watch the Skies/thunder/Tx_Sky_Thunder.dds
+# Settings for Kate, VSCode can be configured separately
+.luarc.json
