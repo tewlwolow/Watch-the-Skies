@@ -10,48 +10,17 @@ local WtC = tes3.worldController.weatherController
 
 --------------------------------------------------------------------------------------
 
-local weathers = {}
-
-weathers.vanillaWeathers = {
-	[0] = "tx_sky_clear",
-	[1] = "tx_sky_cloudy",
-	[2] = "tx_sky_foggy",
-	[3] = "tx_sky_overcast",
-	[4] = "tx_sky_rainy",
-	[5] = "tx_sky_thunder",
-	[6] = "tx_sky_ashstorm",
-	[7] = "tx_sky_blight",
-	[8] = "tx_bm_sky_snow",
-	[9] = "tx_bm_sky_blizzard",
-}
-
-weathers.customWeathers = {}
-for i = 0, 9 do
-	weathers.customWeathers[i] = {}
+local skyTextures = {}
+for i = 1, 10 do
+	skyTextures[i] = {}
 end
-
-local extensions = {
-	[1] = "dds",
-	[2] = "tga",
-	[3] = "bmp",
-}
 
 --------------------------------------------------------------------------------------
 
 local defaultSkyTextures = {}
-
-local function addVanilla(index, sky)
-	for _, extension in ipairs(extensions) do
-		local texturePath = string.format("Data Files\\Textures\\%s.%s", sky, extension)
-		if lfs.fileexists(texturePath) then
-			table.insert(weathers.customWeathers[index], texturePath)
-			debugLog("File added: " .. texturePath)
-			break
-		end
-	end
+for i = 1, 10 do
+	defaultSkyTextures[i] = ""
 end
-
---------------------------------------------------------------------------------------
 
 local function updateController()
 	if not WtC then return end
@@ -69,20 +38,23 @@ local function updateController()
 	end
 end
 
-function skyTexture.storeDefaults()
-	if not table.empty(defaultSkyTextures) then return end
+--------------------------------------------------------------------------------------
 
-	for i, w in pairs(WtC.weathers) do
-		defaultSkyTextures[i] = w.cloudTexture
+function skyTexture.storeDefaults()
+	for i, w in ipairs(WtC.weathers) do
+		if defaultSkyTextures[i] == "" then
+			defaultSkyTextures[i] = w.cloudTexture
+		end
 	end
 	debugLog("Default sky textures stored.")
 end
 
 function skyTexture.restoreDefaults()
-	for i, w in pairs(WtC.weathers) do
+	skyTexture.storeDefaults()
+	for i, w in ipairs(WtC.weathers) do
 		if defaultSkyTextures[i] then
 			w.cloudTexture = defaultSkyTextures[i]
-			debugLog("Restored default texture for weather: " .. w.name)
+			debugLog("Restored default texture for weather: " .. w.name .. " - " .. defaultSkyTextures[i])
 		end
 	end
 
@@ -101,7 +73,7 @@ function skyTexture.randomise(immediate)
 	debugLog("Starting cloud texture randomisation.")
 	for index, weather in ipairs(WtC.weathers) do
 		if (weatherNow) and (weatherNow.index == index) and not (immediate) then goto continue end
-		local textureList = weathers.customWeathers[index - 1]
+		local textureList = skyTextures[index]
 		if #textureList > 0 then
 			local i = math.random(#textureList)
 			local texturePath = textureList[i]
@@ -117,16 +89,20 @@ function skyTexture.randomise(immediate)
 end
 
 function skyTexture.init(params)
+	skyTexture.storeDefaults()
+
 	local immediate = params and params.immediate or false
 	-- Populate data tables with cloud textures --
-	for name, index in pairs(tes3.weather) do
-		local weatherPath = WtSdir .. "\\" .. name
-		for sky in lfs.dir(weatherPath) do
-			if sky ~= ".." and sky ~= "." then
-				local texturePath = weatherPath .. "\\" .. sky
-				if string.endswith(sky, ".dds") or string.endswith(sky, ".tga") then
-					table.insert(weathers.customWeathers[index], texturePath)
-					debugLog("File added: " .. texturePath)
+	if table.empty(skyTextures, true) then
+		for name, index in pairs(tes3.weather) do
+			local weatherPath = WtSdir .. "\\" .. name
+			for sky in lfs.dir(weatherPath) do
+				if sky ~= ".." and sky ~= "." then
+					local texturePath = weatherPath .. "\\" .. sky
+					if string.endswith(sky, ".dds") or string.endswith(sky, ".tga") then
+						table.insert(skyTextures[index + 1], texturePath)
+						debugLog("File added: " .. texturePath)
+					end
 				end
 			end
 		end
@@ -134,12 +110,33 @@ function skyTexture.init(params)
 
 	-- Also pull vanilla textures if needed --
 	if config.useVanillaSkyTextures then
-		for index, sky in pairs(weathers.vanillaWeathers) do
-			addVanilla(index, sky)
+		for index, texturePath in ipairs(defaultSkyTextures) do
+			-- Remove if already exists to avoid duplicates
+			for i = #skyTextures[index], 1, -1 do
+				if skyTextures[index][i] == texturePath then
+					table.remove(skyTextures[index], i)
+					debugLog("Vanilla texture removed before re-adding: " .. texturePath)
+				end
+			end
+
+
+			-- Add vanilla texture
+			table.insert(skyTextures[index], texturePath)
+			debugLog("Vanilla texture added: " .. texturePath)
+		end
+	else
+		-- Remove vanilla textures if config is off
+		for index, texturePath in ipairs(defaultSkyTextures) do
+			for i = #skyTextures[index], 1, -1 do
+				if skyTextures[index][i] == texturePath then
+					table.remove(skyTextures[index], i)
+					debugLog("Vanilla texture removed due to config: " .. texturePath)
+				end
+			end
 		end
 	end
 
-	skyTexture.storeDefaults()
+
 	skyTexture.randomise(immediate)
 end
 
