@@ -57,6 +57,7 @@ local cloudSpeedData = {
 local defaultCloudSpeeds = {}
 
 function cloudSpeed.storeDefaults()
+	if not table.empty(defaultCloudSpeeds) then return end
 	for i, w in pairs(WtC.weathers) do
 		defaultCloudSpeeds[i] = w.cloudsSpeed
 	end

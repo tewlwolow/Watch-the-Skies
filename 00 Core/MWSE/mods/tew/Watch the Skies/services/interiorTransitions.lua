@@ -30,7 +30,7 @@ function interiorTransitions.progress()
 		end
 	end
 
-	if newWeather == currentWeather then
+	if newWeather and newWeather.index == currentWeather.index then
 		interiorTransitions.progress()
 		return
 	end
@@ -65,7 +65,7 @@ function interiorTransitions.onCellChanged(e)
 		}
 
 		debugLog("Player in interior. Resuming interior timer. Hours to weather change: " ..
-		WtC.hoursBetweenWeatherChanges)
+			WtC.hoursBetweenWeatherChanges)
 	end
 end
 

@@ -11,6 +11,7 @@ local WtC = tes3.worldController.weatherController
 local defaultHoursBetweenWeatherChanges
 
 function dynamicWeatherChanges.storeDefaults()
+	if defaultHoursBetweenWeatherChanges then return end
 	defaultHoursBetweenWeatherChanges = WtC.hoursBetweenWeatherChanges
 	debugLog("Default hoursBetweenWeatherChanges stored: " .. defaultHoursBetweenWeatherChanges)
 end

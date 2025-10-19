@@ -21,6 +21,7 @@ local defaultValues = {}
 --------------------------------------------------------------------------------------
 
 function particleAmount.storeDefaults()
+	if not table.empty(defaultValues) then return end
 	for index, weather in ipairs(WtC.weathers) do
 		if table.contains(allowedIndexes, index) then
 			defaultValues[index] = {

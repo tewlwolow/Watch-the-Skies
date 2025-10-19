@@ -26,6 +26,7 @@ local vvRegions = {
 local defaultWeatherChances = {}
 
 function seasonalWeather.storeDefaults()
+	if not table.empty(defaultWeatherChances) then return end
 	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
 		defaultWeatherChances[region.id] = {
 			clear = region.weatherChanceClear,

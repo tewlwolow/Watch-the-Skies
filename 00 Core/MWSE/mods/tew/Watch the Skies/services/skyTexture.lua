@@ -70,12 +70,12 @@ local function updateController()
 end
 
 function skyTexture.storeDefaults()
-	if table.empty(defaultSkyTextures) then
-		for i, w in pairs(WtC.weathers) do
-			defaultSkyTextures[i] = w.cloudTexture
-		end
-		debugLog("Default sky textures stored.")
+	if not table.empty(defaultSkyTextures) then return end
+
+	for i, w in pairs(WtC.weathers) do
+		defaultSkyTextures[i] = w.cloudTexture
 	end
+	debugLog("Default sky textures stored.")
 end
 
 function skyTexture.restoreDefaults()

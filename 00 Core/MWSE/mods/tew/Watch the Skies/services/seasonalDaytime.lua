@@ -12,6 +12,7 @@ local WtC = tes3.worldController.weatherController
 local defaultDaytimeValues = {}
 
 function seasonalDaytime.storeDefaults()
+	if not table.empty(defaultDaytimeValues) then return end
 	defaultDaytimeValues = {
 		sunriseHour = WtC.sunriseHour,
 		sunsetHour = WtC.sunsetHour,
