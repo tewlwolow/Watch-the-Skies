@@ -54,6 +54,28 @@ local cloudSpeedData = {
 
 --------------------------------------------------------------------------------------
 
+local defaultCloudSpeeds = {}
+
+function cloudSpeed.storeDefaults()
+	for i, w in pairs(WtC.weathers) do
+		defaultCloudSpeeds[i] = w.cloudsSpeed
+	end
+	debugLog("Default cloud speeds stored.")
+end
+
+function cloudSpeed.restoreDefaults()
+	for i, w in pairs(WtC.weathers) do
+		if defaultCloudSpeeds[i] then
+			w.cloudsSpeed = defaultCloudSpeeds[i]
+		end
+	end
+	debugLog("Cloud speeds restored to original values.")
+end
+
+function cloudSpeed.init()
+	cloudSpeed.storeDefaults()
+	cloudSpeed.randomise()
+end
 
 function cloudSpeed.randomise()
 	local currentWeatherIndex = WtC.currentWeather.index
@@ -68,6 +90,7 @@ function cloudSpeed.randomise()
 end
 
 function cloudSpeed.startTimer()
+	cloudSpeed.storeDefaults()
 	cloudSpeed.randomise()
 	timer.start {
 		duration = common.centralTimerDuration,

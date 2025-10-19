@@ -8,15 +8,46 @@ local WtC = tes3.worldController.weatherController
 
 --------------------------------------------------------------------------------------
 
+local allowedIndexes = { 5, 6, 9 }
+
 local particleAmountData = {
-	[4] = { 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2500, 2600, 2700, 2800, 3000 },
-	[5] = { 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2300, 2400, 2500, 2600, 2750, 2800, 3000, 3500, 4000, 4500, 5000 },
-	[8] = { 1500, 1700, 2100, 2300, 2800, 3000, 3300, 3500 },
+	[5] = { 1400, 1500, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2250, 2300, 2350, 2400, 2500, 2600, 2700, 2800, 3000 },
+	[6] = { 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 2050, 2100, 2150, 2200, 2300, 2400, 2500, 2600, 2750, 2800, 3000, 3500, 4000, 4500, 5000 },
+	[9] = { 1500, 1700, 2100, 2300, 2800, 3000, 3300, 3500 },
 }
+
+local defaultValues = {}
 
 --------------------------------------------------------------------------------------
 
+function particleAmount.storeDefaults()
+	for index, weather in ipairs(WtC.weathers) do
+		if table.contains(allowedIndexes, index) then
+			defaultValues[index] = {
+				maxParticles = weather.maxParticles,
+				particleRadius = weather.particleRadius,
+			}
+		end
+	end
+	debugLog("Default particle values stored.")
+end
+
+function particleAmount.restoreDefaults()
+	for index, values in pairs(defaultValues) do
+		if WtC.weathers[index] then
+			WtC.weathers[index].maxParticles = values.maxParticles
+			WtC.weathers[index].particleRadius = values.particleRadius
+		end
+	end
+
+	debugLog("Particle values restored to defaults.")
+
+	-- AURA interop
+	event.trigger("WtS:maxParticlesChanged")
+end
+
 function particleAmount.init()
+	particleAmount.storeDefaults()
 	-- Make sure we have a baseline to start with --
 	-- Compatible with MCP particle occlusion feature --
 	WtC.weathers[5].particleRadius = 1500
@@ -27,11 +58,9 @@ end
 function particleAmount.randomise()
 	local currentWeatherIndex = WtC.currentWeather.index
 
-	-- Match the weather index with lua array index --
-	-- Don't want to change currentWeather here --
 	for weather, values in pairs(particleAmountData) do
 		if (currentWeatherIndex ~= weather) then
-			WtC.weathers[weather + 1].maxParticles = table.choice(values)
+			WtC.weathers[weather].maxParticles = table.choice(values)
 		end
 	end
 
@@ -40,6 +69,7 @@ function particleAmount.randomise()
 	debugLog("Thunderstorm particles: " .. WtC.weathers[6].maxParticles)
 	debugLog("Snow particles: " .. WtC.weathers[9].maxParticles)
 
+	-- AURA interop
 	event.trigger("WtS:maxParticlesChanged")
 end
 

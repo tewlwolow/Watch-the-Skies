@@ -22,7 +22,50 @@ local vvRegions = {
 
 --------------------------------------------------------------------------------------
 
+-- Store original region weather chances to allow reverting later --
+local defaultWeatherChances = {}
+
+function seasonalWeather.storeDefaults()
+	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
+		defaultWeatherChances[region.id] = {
+			clear = region.weatherChanceClear,
+			cloudy = region.weatherChanceCloudy,
+			foggy = region.weatherChanceFoggy,
+			overcast = region.weatherChanceOvercast,
+			rain = region.weatherChanceRain,
+			thunder = region.weatherChanceThunder,
+			ash = region.weatherChanceAsh,
+			blight = region.weatherChanceBlight,
+			snow = region.weatherChanceSnow,
+			blizzard = region.weatherChanceBlizzard,
+		}
+	end
+	debugLog("Stored default regional weather chances.")
+end
+
+function seasonalWeather.restoreDefaults()
+	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
+		local defaults = defaultWeatherChances[region.id]
+		if defaults then
+			region.weatherChanceClear = defaults.clear
+			region.weatherChanceCloudy = defaults.cloudy
+			region.weatherChanceFoggy = defaults.foggy
+			region.weatherChanceOvercast = defaults.overcast
+			region.weatherChanceRain = defaults.rain
+			region.weatherChanceThunder = defaults.thunder
+			region.weatherChanceAsh = defaults.ash
+			region.weatherChanceBlight = defaults.blight
+			region.weatherChanceSnow = defaults.snow
+			region.weatherChanceBlizzard = defaults.blizzard
+		end
+	end
+	debugLog("Restored default regional weather chances.")
+end
+
+--------------------------------------------------------------------------------------
+
 function seasonalWeather.init()
+	seasonalWeather.storeDefaults()
 	seasonalWeather.calculate()
 end
 
@@ -101,7 +144,7 @@ function seasonalWeather.calculate()
 	local questStage = seasonalWeather.getMQState()
 	debugLog("Selected blight chance: " .. questStage)
 
-	-- Iterate over all current regions and amend values if we get a much against our table --
+	-- Iterate over all current regions and amend values if we get a match against our table --
 	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
 		-- Special handling for Red Mountain - use either full Blight or normal regional weather after MQ --
 		if region.id == "Red Mountain Region" then

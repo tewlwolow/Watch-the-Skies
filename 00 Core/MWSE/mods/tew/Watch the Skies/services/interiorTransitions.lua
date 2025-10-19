@@ -40,8 +40,8 @@ function interiorTransitions.progress()
 	debugLog("Weather randomised. New weather: " .. WtC.nextWeather.index)
 end
 
-
 function interiorTransitions.onCellChanged(e)
+	if not e then return end
 	local cell = e.cell
 	if not cell then return end
 	if (cell.isOrBehavesAsExterior) then
@@ -49,7 +49,7 @@ function interiorTransitions.onCellChanged(e)
 			intWeatherTimer:pause()
 			debugLog("Player in exterior. Pausing interior timer.")
 		end
-	-- Refresh the timer in interiors --
+		-- Refresh the timer in interiors --
 	else
 		if intWeatherTimer then
 			intWeatherTimer:pause()
@@ -61,10 +61,11 @@ function interiorTransitions.onCellChanged(e)
 			duration = WtC.hoursBetweenWeatherChanges,
 			callback = interiorTransitions.progress,
 			type = timer.game,
-			iterations = -1
+			iterations = -1,
 		}
 
-		debugLog("Player in interior. Resuming interior timer. Hours to weather change: " .. WtC.hoursBetweenWeatherChanges)
+		debugLog("Player in interior. Resuming interior timer. Hours to weather change: " ..
+		WtC.hoursBetweenWeatherChanges)
 	end
 end
 

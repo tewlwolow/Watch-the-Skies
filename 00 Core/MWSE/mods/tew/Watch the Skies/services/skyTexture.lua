@@ -38,6 +38,8 @@ local extensions = {
 
 --------------------------------------------------------------------------------------
 
+local defaultSkyTextures = {}
+
 local function addVanilla(index, sky)
 	for _, extension in ipairs(extensions) do
 		local texturePath = string.format("Data Files\\Textures\\%s.%s", sky, extension)
@@ -49,7 +51,47 @@ local function addVanilla(index, sky)
 	end
 end
 
-function skyTexture.randomise()
+--------------------------------------------------------------------------------------
+
+local function updateController()
+	if not WtC then return end
+
+	if (WtC.nextWeather) then
+		local t = WtC.transitionScalar
+		WtC:switchTransition(WtC.nextWeather.index)
+		WtC.transitionScalar = t
+	else
+		WtC:switchImmediate(WtC.currentWeather.index)
+	end
+
+	if tes3.player then
+		WtC:updateVisuals()
+	end
+end
+
+function skyTexture.storeDefaults()
+	if table.empty(defaultSkyTextures) then
+		for i, w in pairs(WtC.weathers) do
+			defaultSkyTextures[i] = w.cloudTexture
+		end
+		debugLog("Default sky textures stored.")
+	end
+end
+
+function skyTexture.restoreDefaults()
+	for i, w in pairs(WtC.weathers) do
+		if defaultSkyTextures[i] then
+			w.cloudTexture = defaultSkyTextures[i]
+			debugLog("Restored default texture for weather: " .. w.name)
+		end
+	end
+
+	updateController()
+
+	debugLog("All sky textures restored to defaults.")
+end
+
+function skyTexture.randomise(immediate)
 	local weatherNow
 	if WtC then
 		weatherNow = WtC.currentWeather
@@ -58,17 +100,24 @@ function skyTexture.randomise()
 
 	debugLog("Starting cloud texture randomisation.")
 	for index, weather in ipairs(WtC.weathers) do
-		if (weatherNow) and (weatherNow.index == index) then goto continue end
+		if (weatherNow) and (weatherNow.index == index) and not (immediate) then goto continue end
 		local textureList = weathers.customWeathers[index - 1]
-		local i = math.random(#textureList)
-		local texturePath = textureList[i]
-		weather.cloudTexture = texturePath
-		debugLog("Cloud texture path set: " .. weather.name .. " >> " .. weather.cloudTexture)
+		if #textureList > 0 then
+			local i = math.random(#textureList)
+			local texturePath = textureList[i]
+			weather.cloudTexture = texturePath
+			debugLog("Cloud texture path set: " .. weather.name .. " >> " .. weather.cloudTexture)
+		end
 		::continue::
+	end
+
+	if immediate then
+		updateController()
 	end
 end
 
-function skyTexture.init()
+function skyTexture.init(params)
+	local immediate = params and params.immediate or false
 	-- Populate data tables with cloud textures --
 	for name, index in pairs(tes3.weather) do
 		local weatherPath = WtSdir .. "\\" .. name
@@ -89,6 +138,9 @@ function skyTexture.init()
 			addVanilla(index, sky)
 		end
 	end
+
+	skyTexture.storeDefaults()
+	skyTexture.randomise(immediate)
 end
 
 function skyTexture.startTimer()

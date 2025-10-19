@@ -8,14 +8,40 @@ local WtC = tes3.worldController.weatherController
 
 --------------------------------------------------------------------------------------
 
+-- Store default values for later restoration --
+local defaultDaytimeValues = {}
+
+function seasonalDaytime.storeDefaults()
+	defaultDaytimeValues = {
+		sunriseHour = WtC.sunriseHour,
+		sunsetHour = WtC.sunsetHour,
+		sunriseDuration = WtC.sunriseDuration,
+		sunsetDuration = WtC.sunsetDuration,
+	}
+	debugLog("Stored default sunrise/sunset values.")
+end
+
+function seasonalDaytime.restoreDefaults()
+	if next(defaultDaytimeValues) then
+		WtC.sunriseHour = defaultDaytimeValues.sunriseHour
+		WtC.sunsetHour = defaultDaytimeValues.sunsetHour
+		WtC.sunriseDuration = defaultDaytimeValues.sunriseDuration
+		WtC.sunsetDuration = defaultDaytimeValues.sunsetDuration
+		debugLog("Restored default sunrise/sunset values.")
+	end
+end
+
+--------------------------------------------------------------------------------------
 
 function seasonalDaytime.init()
+	seasonalDaytime.storeDefaults()
 	seasonalDaytime.calculate()
 end
 
 -- The following function uses slightly amended sveng's calculations from their old ESP mod: nexusmods.com/morrowind/mods/44375 --
 -- The function changes sunrise/sunset hours based on world latitude --
 function seasonalDaytime.calculate()
+	if not tes3.player then return end
 	local month = tes3.worldController.month.value
 	local day = tes3.worldController.day.value
 
@@ -88,13 +114,13 @@ function seasonalDaytime.calculate()
 		debugLog("No change in daytime hours. Returning.")
 	else
 		debugLog("Previous values: " ..
-		WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
+			WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
 		WtC.sunriseHour = math.ceil(adjustedSunrise)
 		WtC.sunsetHour = math.ceil(adjustedSunset)
 		WtC.sunriseDuration = math.ceil(durSunrise)
 		WtC.sunsetDuration = math.ceil(durSunset)
 		debugLog("Current values: " ..
-		WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
+			WtC.sunriseHour .. " " .. WtC.sunriseDuration .. " " .. WtC.sunsetHour .. " " .. WtC.sunsetDuration)
 	end
 end
 

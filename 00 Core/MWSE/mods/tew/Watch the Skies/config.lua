@@ -1,4 +1,5 @@
 return mwse.loadConfig("Watch the Skies", {
+    modEnabled = true,
     cloudSpeed = true,
     cloudSpeedMode = 100,
     debugLogOn = false,

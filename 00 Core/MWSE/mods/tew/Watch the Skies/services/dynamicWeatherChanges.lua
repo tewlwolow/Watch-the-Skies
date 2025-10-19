@@ -8,7 +8,22 @@ local WtC = tes3.worldController.weatherController
 
 --------------------------------------------------------------------------------------
 
+local defaultHoursBetweenWeatherChanges
+
+function dynamicWeatherChanges.storeDefaults()
+	defaultHoursBetweenWeatherChanges = WtC.hoursBetweenWeatherChanges
+	debugLog("Default hoursBetweenWeatherChanges stored: " .. defaultHoursBetweenWeatherChanges)
+end
+
+function dynamicWeatherChanges.restoreDefaults()
+	if defaultHoursBetweenWeatherChanges then
+		WtC.hoursBetweenWeatherChanges = defaultHoursBetweenWeatherChanges
+		debugLog("hoursBetweenWeatherChanges restored to default: " .. defaultHoursBetweenWeatherChanges)
+	end
+end
+
 function dynamicWeatherChanges.init()
+	dynamicWeatherChanges.storeDefaults()
 	dynamicWeatherChanges.randomise()
 end
 
