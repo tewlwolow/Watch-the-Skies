@@ -33,4 +33,3 @@ You can find the previous mod iterations here:
 
 > - [ ] Add falling ash
 > - [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
-> - [ ] Control density of rain and snow meshes
