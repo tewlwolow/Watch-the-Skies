@@ -34,7 +34,7 @@ mainPage:createYesNoButton {
     variable = registerVariable("skyTexture"),
 }
 mainPage:createYesNoButton {
-    label = "Use vanilla sky textures as well? Note that these need to be in your Data Files/Textures folder, BSA will not work.",
+    label = "Use vanilla sky textures? They need to be in your Data Files/Textures folder, BSA will not work.",
     variable = registerVariable("useVanillaSkyTextures"),
 }
 mainPage:createYesNoButton {
