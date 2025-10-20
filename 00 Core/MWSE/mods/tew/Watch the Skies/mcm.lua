@@ -1,7 +1,11 @@
 local configPath = "Watch the Skies"
 local config = require("tew.Watch the Skies.config")
 local metadata = toml.loadMetadata("Watch the Skies")
+local events = require("tew.Watch the Skies.components.events") -- contains services table
+local common = require("tew.Watch the Skies.components.common")
+local debugLog = common.debugLog
 
+-- helper to register variables
 local function registerVariable(id)
     return mwse.mcm.createTableVariable {
         id = id,
@@ -9,64 +13,42 @@ local function registerVariable(id)
     }
 end
 
+-- create template
 local template = mwse.mcm.createTemplate {
     name = metadata.package.name,
     headerImagePath = "\\Textures\\tew\\Watch the Skies\\WtS_logo.tga",
 }
 
+-- main page
 local mainPage = template:createPage { label = "Main Settings", noScroll = true }
 mainPage:createCategory {
     label = metadata.package.name .. " " .. metadata.package.version .. " by tewlwolow.\n" .. metadata.package.description .. "\n\nSettings:",
 }
 
-mainPage:createYesNoButton {
-    label = "Enable Watch the Skies?",
-    description = "Enable Watch the Skies?\n\nDefault: On\n\n",
-    variable = registerVariable("modEnabled"),
-}
-mainPage:createYesNoButton {
-    label = "Enable debug mode?",
-    variable = registerVariable("debugLogOn"),
-    restartRequired = true,
-}
-mainPage:createYesNoButton {
-    label = "Enable randomised cloud textures?",
-    variable = registerVariable("skyTexture"),
-}
-mainPage:createYesNoButton {
-    label = "Use vanilla sky textures? They need to be in your Data Files/Textures folder, BSA will not work.",
-    variable = registerVariable("useVanillaSkyTextures"),
-}
-mainPage:createYesNoButton {
-    label = "Enable randomised hours between weather changes?",
-    variable = registerVariable("dynamicWeatherChanges"),
-}
-mainPage:createYesNoButton {
-    label = "Enable weather changes in interiors?",
-    variable = registerVariable("interiorTransitions"),
-}
-mainPage:createYesNoButton {
-    label = "Enable seasonal weather?",
-    variable = registerVariable("seasonalWeather"),
-}
-mainPage:createYesNoButton {
-    label = "Enable seasonal daytime hours?",
-    variable = registerVariable("seasonalDaytime"),
-}
-mainPage:createYesNoButton {
-    label = "Randomise max particles?",
-    variable = registerVariable("particleAmount"),
-}
-mainPage:createYesNoButton {
-    label = "Randomise clouds speed?",
-    variable = registerVariable("cloudSpeed"),
-}
-mainPage:createYesNoButton {
-    label = "Randomise rain and snow particle meshes?",
-    variable = registerVariable("particleMesh"),
-    restartRequired = true,
+-- create buttons
+local settings = {
+    { label = "Enable Watch the Skies?",                                                                          id = "modEnabled" },
+    { label = "Enable debug mode?",                                                                               id = "debugLogOn",           restartRequired = true },
+    { label = "Enable randomised cloud textures?",                                                                id = "skyTexture" },
+    { label = "Use vanilla sky textures? They need to be in your Data Files/Textures folder, BSA will not work.", id = "useVanillaSkyTextures" },
+    { label = "Enable randomised hours between weather changes?",                                                 id = "dynamicWeatherChanges" },
+    { label = "Enable weather changes in interiors?",                                                             id = "interiorTransitions" },
+    { label = "Enable seasonal weather?",                                                                         id = "seasonalWeather" },
+    { label = "Enable seasonal daytime hours?",                                                                   id = "seasonalDaytime" },
+    { label = "Randomise max particles?",                                                                         id = "particleAmount" },
+    { label = "Randomise clouds speed?",                                                                          id = "cloudSpeed" },
+    { label = "Randomise rain and snow particle meshes?",                                                         id = "particleMesh",         restartRequired = true },
 }
 
+for _, setting in ipairs(settings) do
+    mainPage:createYesNoButton {
+        label = setting.label,
+        variable = registerVariable(setting.id),
+        restartRequired = setting.restartRequired,
+    }
+end
+
+-- cloud speed dropdown
 mainPage:createDropdown {
     label = "Cloud speed mode:",
     options = {
@@ -76,9 +58,49 @@ mainPage:createDropdown {
     variable = registerVariable("cloudSpeedMode"),
 }
 
+-- onClose: start/stop only changed services
 template.onClose = function()
+    local oldConfig = mwse.loadConfig(configPath) or {}
+
     mwse.saveConfig(configPath, config)
-    dofile("Data Files\\MWSE\\mods\\tew\\Watch the Skies\\components\\events.lua")
+
+    if not config.modEnabled then
+        debugLog("Mod disabled — stopping all services.")
+        for _, service in pairs(events.services) do
+            service.stop()
+        end
+        return
+    end
+
+    if not oldConfig.modEnabled and config.modEnabled then
+        debugLog("Mod enabled — starting enabled services.")
+        for serviceName, service in pairs(events.services) do
+            if config[serviceName] then
+                debugLog(string.format("Starting service: %s", serviceName))
+                service.init()
+            end
+        end
+        return
+    end
+
+    for serviceName, service in pairs(events.services) do
+        local oldEnabled = oldConfig[serviceName]
+        local newEnabled = config[serviceName]
+
+        if oldEnabled ~= newEnabled then
+            if newEnabled then
+                debugLog(string.format("Enabling service: %s", serviceName))
+                service.init()
+            else
+                debugLog(string.format("Disabling service: %s", serviceName))
+                service.stop()
+            end
+        end
+    end
 end
+
+
+
+
 
 mwse.mcm.register(template)
