@@ -22,7 +22,8 @@ local template = mwse.mcm.createTemplate {
 -- main page
 local mainPage = template:createPage { label = "Main Settings", noScroll = true }
 mainPage:createCategory {
-    label = metadata.package.name .. " " .. metadata.package.version .. " by tewlwolow.\n" .. metadata.package.description .. "\n\nSettings:",
+    label = metadata.package.name .. " " .. metadata.package.version .. " by tewlwolow.\n" ..
+        metadata.package.description .. "\n\nSettings:",
 }
 
 -- create buttons
@@ -58,12 +59,13 @@ mainPage:createDropdown {
     variable = registerVariable("cloudSpeedMode"),
 }
 
--- onClose: start/stop only changed services
+-- onClose: start/stop only changed services + handle vanilla textures
 template.onClose = function()
     local oldConfig = mwse.loadConfig(configPath) or {}
 
     mwse.saveConfig(configPath, config)
 
+    -- Handle overall mod disable
     if not config.modEnabled then
         debugLog("Mod disabled — stopping all services.")
         for _, service in pairs(events.services) do
@@ -72,6 +74,7 @@ template.onClose = function()
         return
     end
 
+    -- Handle mod re-enabled
     if not oldConfig.modEnabled and config.modEnabled then
         debugLog("Mod enabled — starting enabled services.")
         for serviceName, service in pairs(events.services) do
@@ -83,6 +86,7 @@ template.onClose = function()
         return
     end
 
+    -- Handle individual service toggles
     for serviceName, service in pairs(events.services) do
         local oldEnabled = oldConfig[serviceName]
         local newEnabled = config[serviceName]
@@ -97,10 +101,18 @@ template.onClose = function()
             end
         end
     end
+
+    -- Handle vanilla sky textures toggle dynamically
+    if oldConfig.useVanillaSkyTextures ~= config.useVanillaSkyTextures then
+        local skyTexture = require("tew.Watch the Skies.services.skyTexture")
+        if config.useVanillaSkyTextures then
+            debugLog("Vanilla sky textures enabled — adding to texture table.")
+            skyTexture.addVanillaTextures()
+        else
+            debugLog("Vanilla sky textures disabled — removing from texture table.")
+            skyTexture.removeVanillaTextures()
+        end
+    end
 end
-
-
-
-
 
 mwse.mcm.register(template)
