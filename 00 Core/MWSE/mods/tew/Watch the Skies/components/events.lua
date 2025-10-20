@@ -33,7 +33,6 @@ events.services = {
 		init = function()
 			debugLog("Initializing skyTexture service...")
 			local skyTexture = require("tew.Watch the Skies.services.skyTexture")
-			skyTexture.init()
 			event.register(tes3.event.loaded, skyTexture.startTimer)
 			skyTexture.init({ immediate = true })
 			debugLog("skyTexture service initialized.")
