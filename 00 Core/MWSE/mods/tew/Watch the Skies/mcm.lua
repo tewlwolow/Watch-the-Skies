@@ -113,6 +113,16 @@ template.onClose = function()
             skyTexture.removeVanillaTextures()
         end
     end
+
+    -- Handle cloud speed toggle dynamically
+    if oldConfig.cloudSpeedMode ~= config.cloudSpeedMode then
+        local cloudSpeed = require("tew.Watch the Skies.services.cloudSpeed")
+        if config.cloudSpeed then
+            cloudSpeed.restoreDefaults()
+            cloudSpeed.init()
+            debugLog("Cloud speed changed to " .. config.cloudSpeedMode)
+        end
+    end
 end
 
 mwse.mcm.register(template)
