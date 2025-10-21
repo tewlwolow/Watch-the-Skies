@@ -31,5 +31,5 @@ You can find the previous mod iterations here:
 
 ## :heavy_check_mark: Feature Tracker
 
-> - [ ] Add falling ash
-> - [ ] Add more interesting particle-based effects, like dust devils, sand gusts etc.
+> - [ ] Control cloud shader through Lua (remove in foggy)
+> - [ ] Look into fog settings (sin to simulate movement?)
