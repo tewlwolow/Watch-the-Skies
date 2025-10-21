@@ -40,6 +40,7 @@ local settings = {
     { label = "Enable randomised clouds speed?",                                                                  id = "cloudSpeed" },
     { label = "Enable randomised rain and snow particle meshes?",                                                 id = "particleMesh",         restartRequired = true },
     { label = "Enable dynamic sky shader (XE Mod Sky) handling? Note this may cause occasional stutter.",         id = "skyShaderController" },
+    { label = "Enable variable MGE XE fog (distance/offset)?",                                                    id = "variableFog" },
 }
 
 for _, setting in ipairs(settings) do

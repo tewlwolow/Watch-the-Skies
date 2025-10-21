@@ -173,6 +173,23 @@ events.services = {
 			debugLog("skyShaderController service stopped.")
 		end,
 	},
+
+	variableFog = {
+		init = function()
+			debugLog("Initializing variableFog service...")
+			local variableFog = require("tew.Watch the Skies.services.variableFog")
+			variableFog.storeDefaults()
+			event.register(tes3.event.simulate, function(e) variableFog.oscillate(e.delta) end)
+			debugLog("variableFog service initialized.")
+		end,
+		stop = function()
+			debugLog("Stopping variableFog service...")
+			local variableFog = require("tew.Watch the Skies.services.variableFog")
+			event.unregister(tes3.event.simulate, function(e) variableFog.oscillate(e.delta) end)
+			variableFog.restoreDefaults()
+			debugLog("variableFog service stopped.")
+		end,
+	},
 }
 
 return events
