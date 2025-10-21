@@ -85,7 +85,7 @@ float dis1 = 7.0;
 float dis3 = 0.012;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.0088;
+float timeFactor = 0.0058;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
