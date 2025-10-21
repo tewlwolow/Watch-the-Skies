@@ -148,6 +148,31 @@ events.services = {
 			debugLog("interiorTransitions service stopped.")
 		end,
 	},
+
+	skyShaderController = {
+		init = function()
+			debugLog("Initializing skyShaderController service...")
+			local skyShaderController = require("tew.Watch the Skies.services.skyShaderController")
+			event.register(tes3.event.cellChanged, skyShaderController.switch)
+			event.register(tes3.event.weatherTransitionStarted, skyShaderController.switch)
+			event.register(tes3.event.weatherTransitionFinished, skyShaderController.switch)
+			event.register(tes3.event.weatherChangedImmediate, skyShaderController.switch)
+			event.register(tes3.event.loaded, skyShaderController.modShaderOn)
+			skyShaderController.switch()
+			debugLog("skyShaderController service initialized.")
+		end,
+		stop = function()
+			debugLog("Stopping skyShaderController service...")
+			local skyShaderController = require("tew.Watch the Skies.services.skyShaderController")
+			event.unregister(tes3.event.cellChanged, skyShaderController.switch)
+			event.unregister(tes3.event.weatherTransitionStarted, skyShaderController.switch)
+			event.unregister(tes3.event.weatherTransitionFinished, skyShaderController.switch)
+			event.unregister(tes3.event.weatherChangedImmediate, skyShaderController.switch)
+			event.unregister(tes3.event.loaded, skyShaderController.modShaderOn)
+			skyShaderController.modShaderOn()
+			debugLog("skyShaderController service stopped.")
+		end,
+	},
 }
 
 return events

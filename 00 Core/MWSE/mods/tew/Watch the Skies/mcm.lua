@@ -36,9 +36,10 @@ local settings = {
     { label = "Enable weather changes in interiors?",                                                             id = "interiorTransitions" },
     { label = "Enable seasonal weather?",                                                                         id = "seasonalWeather" },
     { label = "Enable seasonal daytime hours?",                                                                   id = "seasonalDaytime" },
-    { label = "Randomise max particles?",                                                                         id = "particleAmount" },
-    { label = "Randomise clouds speed?",                                                                          id = "cloudSpeed" },
-    { label = "Randomise rain and snow particle meshes?",                                                         id = "particleMesh",         restartRequired = true },
+    { label = "Enable randomised max particles?",                                                                 id = "particleAmount" },
+    { label = "Enable randomised clouds speed?",                                                                  id = "cloudSpeed" },
+    { label = "Enable randomised rain and snow particle meshes?",                                                 id = "particleMesh",         restartRequired = true },
+    { label = "Enable dynamic sky shader (XE Mod Sky) handling? Note this may cause occasional stutter.",         id = "skyShaderController" },
 }
 
 for _, setting in ipairs(settings) do
