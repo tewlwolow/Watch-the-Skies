@@ -1,6 +1,12 @@
 local variableFog = {}
 
 --------------------------------------------------------------------------------------
+-- Require common for logging
+--------------------------------------------------------------------------------------
+local common = require("tew.Watch the Skies.components.common")
+local debugLog = common.debugLog
+
+--------------------------------------------------------------------------------------
 -- Internal state
 --------------------------------------------------------------------------------------
 local time = 0
@@ -29,17 +35,18 @@ end
 --------------------------------------------------------------------------------------
 function variableFog.storeDefaults()
     if not table.empty(defaults) then return end
-    defaults = {}
-    defaultCloudSpeeds = {}
 
     local WtC = tes3.worldController.weatherController
-    for i, w in pairs(WtC.weathers) do
+    for i, _ in pairs(WtC.weathers) do
         local fog = mge.weather.getDistantFog(i)
-        defaults[i] = {
-            distance = fog.distance,
-            offset = fog.offset,
-        }
-        defaultCloudSpeeds[i] = w.cloudsSpeed or 100
+        if fog then
+            defaults[i - 1] = {
+                distance = fog.distance,
+                offset = fog.offset,
+            }
+            debugLog(("[variableFog] Stored default for weather %d: distance=%.3f, offset=%.3f")
+                :format(i - 1, fog.distance, fog.offset))
+        end
     end
 end
 
@@ -55,6 +62,8 @@ function variableFog.restoreDefaults()
                 distance = def.distance,
                 offset = def.offset,
             })
+            debugLog(string.format("Restored fog for weather %d: distance=%.3f, offset=%.3f", i, def.distance, def
+                .offset))
         end
     end
 end
@@ -68,13 +77,19 @@ function variableFog.oscillate(dt)
 
     local WtC = tes3.worldController.weatherController
     local weatherIndex = WtC.nextWeather and WtC.nextWeather.index or WtC.currentWeather.index
-    local orgFog = defaults[weatherIndex] or mge.weather.getDistantFog(weatherIndex)
-    local orgDistance = orgFog.distance
-    local orgOffset = orgFog.offset
+
+    -- Safely get original fog values
+    local orgFog = (defaults[weatherIndex] and {
+        distance = defaults[weatherIndex].distance,
+        offset = defaults[weatherIndex].offset,
+    }) or mge.weather.getDistantFog(weatherIndex) or { distance = 0, offset = 0 }
+
+    local orgDistance = orgFog.distance or 0
+    local orgOffset = orgFog.offset or 0
 
     -- base oscillation speed from cloudSpeed
     local cloudSpeed = defaultCloudSpeeds[weatherIndex] or 100
-    local baseSpeed = 0.082 + (cloudSpeed / 1000)
+    local baseSpeed = 0.042 + (cloudSpeed / 1000)
 
     ----------------------------------------------------------------------------------
     -- Gust logic (subtle)
@@ -95,10 +110,10 @@ function variableFog.oscillate(dt)
     ----------------------------------------------------------------------------------
     -- Broken wave calculation, closer to center
     ----------------------------------------------------------------------------------
-    local amplitudeBase = orgDistance * 0.12                                    -- smaller base amplitude
-    local noise = smoothNoise(time * 0.1 + noiseSeed) * 0.5                     -- reduce noise effect
+    local amplitudeBase = orgDistance * 0.12
+    local noise = smoothNoise(time * 0.1 + noiseSeed) * 0.5
     local amplitude = amplitudeBase * (1 + gustAmplitude + noise)
-    local phaseJitter = 0.5 + 0.25 * smoothNoise(time * 0.05 + noiseSeed + 500) -- less speed jitter
+    local phaseJitter = 0.5 + 0.25 * smoothNoise(time * 0.05 + noiseSeed + 500)
     local sine = math.sin(time * baseSpeed * phaseJitter)
 
     local newDistance = orgDistance + sine * amplitude
@@ -107,6 +122,12 @@ function variableFog.oscillate(dt)
     if math.abs(orgOffset) < 0.0001 then
         newOffset = orgOffset
     end
+
+    ----------------------------------------------------------------------------------
+    -- Debug logging
+    ----------------------------------------------------------------------------------
+    debugLog(("[variableFog] oscillate tick: weather=%d, orgDistance=%.3f, newDistance=%.3f, orgOffset=%.3f, newOffset=%.3f, sine=%.3f, amplitude=%.3f")
+        :format(weatherIndex, orgDistance, newDistance, orgOffset, newOffset, sine, amplitude))
 
     ----------------------------------------------------------------------------------
     -- Apply updated fog
