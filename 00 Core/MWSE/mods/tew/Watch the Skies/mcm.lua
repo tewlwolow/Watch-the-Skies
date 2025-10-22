@@ -123,12 +123,6 @@ local settings = {
         "Randomises the shapes of rain and snow particles for visual variety. Requires restart.",
     },
     {
-        label = "Enable dynamic sky shader (XE Mod Sky) handling?",
-        id = "skyShaderController",
-        description =
-        "Controls dynamic sky shader updates for XE Mod Sky. Improves visual fidelity but introduces an occasional stutter on weather changes.",
-    },
-    {
         label = "Enable variable fog?",
         id = "variableFog",
         description =
