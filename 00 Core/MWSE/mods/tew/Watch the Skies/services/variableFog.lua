@@ -106,9 +106,9 @@ end
 -- Apply fog on weather change
 -- All weather presets except current and next
 --------------------------------------------------------------------------------------
-function variableFog.applyFogOnWeatherChange(current, next)
-    currentWeather = current
-    nextWeather    = next
+function variableFog.applyFogOnWeatherChange(e)
+    currentWeather = e.from or e.to
+    nextWeather    = e.to
 
     local region   = tes3.getRegion(true)
 
