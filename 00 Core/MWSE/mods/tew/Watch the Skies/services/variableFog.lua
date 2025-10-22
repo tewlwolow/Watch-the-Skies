@@ -33,6 +33,7 @@ end
 --------------------------------------------------------------------------------------
 -- Store defaults and cloud speeds
 --------------------------------------------------------------------------------------
+-- TODO: Need to persist!!!
 function variableFog.storeDefaults()
     if not table.empty(defaults) then return end
 
@@ -63,7 +64,7 @@ function variableFog.restoreDefaults()
                 offset = def.offset,
             })
             debugLog(string.format("Restored fog for weather %d: distance=%.3f, offset=%.3f", i, def.distance, def
-            .offset))
+                .offset))
         end
     end
 end
