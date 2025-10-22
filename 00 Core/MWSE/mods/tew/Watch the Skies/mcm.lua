@@ -77,7 +77,7 @@ local settings = {
         label = "Use vanilla sky textures?",
         id = "useVanillaSkyTextures",
         description =
-        "Additionally use vanilla textures for more variation and an occasional full-blown nostalgic experience. Textures must be unpacked in the Data Files\\Texture folder. BSA archives are not supported.",
+        "Additionally use vanilla textures for more variation and an occasional full-blown nostalgic experience. Textures must be unpacked in the Data Files\\Textures folder. BSA archives are not supported.",
     },
     {
         label = "Enable randomised hours between weather changes?",
