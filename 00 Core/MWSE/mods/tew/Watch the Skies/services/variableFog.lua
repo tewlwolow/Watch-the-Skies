@@ -95,7 +95,7 @@ local function applyFogToWeather(weatherIndex, region)
     })
 
     -- Log
-    variableFog.logFogValues(weatherIndex, finalDistance, finalOffset, region, fogFactor)
+    -- variableFog.logFogValues(weatherIndex, finalDistance, finalOffset, region, fogFactor)
 
     debugLog(("Applied fog: weather=%d, distance=%.3f, offset=%.3f, region=%s")
         :format(weatherIndex, finalDistance, finalOffset,
