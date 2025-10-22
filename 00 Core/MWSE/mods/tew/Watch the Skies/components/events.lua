@@ -178,14 +178,24 @@ events.services = {
 		init = function()
 			debugLog("Initializing variableFog service...")
 			local variableFog = require("tew.Watch the Skies.services.variableFog")
-			variableFog.storeDefaults()
-			event.register(tes3.event.simulate, function(e) variableFog.oscillate(e.delta) end)
+			variableFog.restoreDefaults()
+			event.register(tes3.event.weatherTransitionStarted,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
+			event.register(tes3.event.weatherTransitionFinished,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
+			event.register(tes3.event.weatherChangedImmediate,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
 			debugLog("variableFog service initialized.")
 		end,
 		stop = function()
 			debugLog("Stopping variableFog service...")
 			local variableFog = require("tew.Watch the Skies.services.variableFog")
-			event.unregister(tes3.event.simulate, function(e) variableFog.oscillate(e.delta) end)
+			event.unregister(tes3.event.weatherTransitionStarted,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
+			event.unregister(tes3.event.weatherTransitionFinished,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
+			event.unregister(tes3.event.weatherChangedImmediate,
+				function(e) variableFog.applyFogOnWeatherChange(e.from.index, e.to.index) end)
 			variableFog.restoreDefaults()
 			debugLog("variableFog service stopped.")
 		end,
