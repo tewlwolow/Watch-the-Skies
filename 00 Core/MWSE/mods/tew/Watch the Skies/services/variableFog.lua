@@ -63,13 +63,13 @@ function variableFog.restoreDefaults()
                 offset = def.offset,
             })
             debugLog(string.format("Restored fog for weather %d: distance=%.3f, offset=%.3f", i, def.distance, def
-                .offset))
+            .offset))
         end
     end
 end
 
 --------------------------------------------------------------------------------------
--- Oscillate with natural, broken wave
+-- Oscillate with natural, broken wave and dynamic offset
 --------------------------------------------------------------------------------------
 function variableFog.oscillate(dt)
     dt = dt or 0.1
@@ -108,7 +108,7 @@ function variableFog.oscillate(dt)
     end
 
     ----------------------------------------------------------------------------------
-    -- Broken wave calculation, closer to center
+    -- Broken wave calculation
     ----------------------------------------------------------------------------------
     local amplitudeBase = orgDistance * 0.12
     local noise = smoothNoise(time * 0.1 + noiseSeed) * 0.5
@@ -116,12 +116,16 @@ function variableFog.oscillate(dt)
     local phaseJitter = 0.5 + 0.25 * smoothNoise(time * 0.05 + noiseSeed + 500)
     local sine = math.sin(time * baseSpeed * phaseJitter)
 
+    -- Distance calculation: never below original default
     local newDistance = orgDistance + sine * amplitude
+    newDistance = math.max(newDistance, orgDistance) -- ensure distance >= default
     local distanceDelta = newDistance - orgDistance
-    local newOffset = orgOffset + distanceDelta * 0.02
-    if math.abs(orgOffset) < 0.0001 then
-        newOffset = orgOffset
-    end
+
+    -- Offset spikes (can go much higher, never below 0)
+    local offsetNoise = smoothNoise(time * 0.2 + noiseSeed + 1000)
+    local offsetAmplitude = math.max(0.1, gustAmplitude * 2 + offsetNoise) * orgDistance
+    local newOffset = orgOffset + distanceDelta * 0.02 + math.sin(time * 0.5) * offsetAmplitude
+    newOffset = math.max(newOffset, 0) -- ensure offset never negative
 
     ----------------------------------------------------------------------------------
     -- Debug logging
