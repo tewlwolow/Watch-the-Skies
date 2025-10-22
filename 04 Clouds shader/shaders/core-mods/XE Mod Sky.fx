@@ -85,13 +85,13 @@ float dis1 = 2.3;
 float dis3 = 0.0036;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.001;
+float timeFactor = 0.0012;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;
 
 // Controls the factor for output saturation with sun colour, basically a sort of contrast modifier
-float incolFactor = 0.36;
+float incolFactor = 0.4;
 
 float4 CloudsPS(SkyVertOut IN) : COLOR0 {
     float4 c = 0; // Final color output
