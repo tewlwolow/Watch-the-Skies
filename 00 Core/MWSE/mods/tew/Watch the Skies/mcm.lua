@@ -128,6 +128,12 @@ local settings = {
         description =
         "Dynamically adjusts fog distance and offset for more realistic environments. Overall more foggy, more vanilla-like feeling.",
     },
+    {
+        label = "Enable weather flow constraints?",
+        id = "weatherFlow",
+        description =
+        "Controls allowed weather transitions and introduces intermediate steps for smoother changes. This will give a more organic overall feel with no sudden, unnatural transitions.",
+    },
 }
 
 
