@@ -78,14 +78,14 @@ SkyVertOut CloudsVS(StatVertIn IN) {
 // Clouds rendering from XE Mod Sky by Dexter (vtastek) ported to MGE XE >= 0.16.0 and edited by tewlwolow
 
 // Controls the initial displacement when sampling cloud textures
-float disSample = 0.011;
+float disSample = 0.022;
 
 // Controls the displacement of the clouds. Higher = more 'fragmented'
-float dis1 = 2.3;
-float dis3 = 0.0036;
+float dis1 = 2.5;
+float dis3 = 0.0038;
 
 // Controls the time factor for displacement. Higher = faster
-float timeFactor = 0.0012;
+float timeFactor = 0.001;
 
 // Controls the further clouds colour saturation with sun ambient colour. Higher = more sun ambient colour influence
 float sunAmbMult = 2;

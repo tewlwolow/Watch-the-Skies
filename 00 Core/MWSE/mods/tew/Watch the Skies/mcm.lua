@@ -20,136 +20,67 @@ local template = mwse.mcm.createTemplate {
 }
 
 -- main page
-local mainPage = template:createSideBarPage { label = "Main Settings",
+local mainPage = template:createSideBarPage {
+    label = "Main Settings",
     description = [[
-Watch the Skies, Outlander!
 
-MWSE Lua-based weather overhaul for Morrowind. Makes weather more dynamic and immersive.
+A MWSE Lua-based weather overhaul for Morrowind. Makes weather more dynamic and immersive.
 
 Features:
-- Enable weather changes indoors. In vanilla there is no change unless you enter when transition is already under way.
-- Randomised cloud textures for varied skies. No more copy-pasted clouds all over Tamriel!
-- Dynamic weather timing with shortened and randomized intervals. Less predictability and more natural transitions.
-- Randomised rain and snow particle amounts and cloud speed. Best paired with AURA variable rain sounds and Vapourmist clouds.
-- Seasonal weather with Blight scaling mechanics for the main quest. Each month will feel different across all regions.
-- Dynamic daylight hours that vary by in-game season and latitude. Bring a torch to Dagon Fel!
-
-Extras:
-- Cloud and sunshaft shaders for improved visuals.
-- 16 raindrop meshes using 5 textures, and 10 unique snow meshes for more varied weather effects.
-- Optional Weather Adjuster preset inspired by the good old Red Skies mod and Morrowind concept art.
-- Texture packs for clouds (1k resolution with 20+ variations per weather). Compatible with custom textures placed in Textures/tew/Watch the Skies - you can add and remove sky textures to your heart's content.
-
-Notes:
-- If using Weather Adjuster, enable the WA cloud setting for full compatibility.
-- XE Sky Variations.esp from MGE XE is not needed when using Weather Adjuster - best to disable.
-- There are two version of textures included - for vanilla and skies .iv mesh. Choose accordingly.
+- Enable weather changes indoors
+- Randomised cloud textures
+- Dynamic weather timing
+- Seasonal weather
+- Dynamic daylight hours
+- Particle & fog enhancements
 ]],
 }
 
-mainPage:createCategory {
-    label = metadata.package.name .. " " .. metadata.package.version .. " by tewlwolow.\n" ..
-        metadata.package.description .. "\n\nSettings:",
+-- =========================
+-- Core Settings
+-- =========================
+mainPage:createCategory { label = "Core Settings:" }
+mainPage:createYesNoButton {
+    label = "Enable Watch the Skies?",
+    description = "Turns the 'Watch the Skies' mod on or off. Disabling will revert to default game weather and sky behavior.",
+    variable = registerVariable("modEnabled"),
+}
+mainPage:createYesNoButton {
+    label = "Enable debug mode?",
+    description = "Activates detailed logging for troubleshooting. Requires restart.",
+    variable = registerVariable("debugLogOn"),
+    restartRequired = true,
 }
 
--- create buttons
-local settings = {
-    {
-        label = "Enable Watch the Skies?",
-        id = "modEnabled",
-        description =
-        "Turns the 'Watch the Skies' mod on or off. Disabling will revert to default game weather and sky behavior.",
-    },
-    {
-        label = "Enable debug mode?",
-        id = "debugLogOn",
-        restartRequired = true,
-        description =
-        "Activates detailed logging for troubleshooting. Not recommended for regular gameplay as it may impact performance and generate large log files. Intended for modders or bug reporting. Requires restart.",
-    },
-    {
-        label = "Enable randomised cloud textures?",
-        id = "skyTexture",
-        description =
-        "Randomises cloud textures for a more varied and dynamic sky appearance.",
-    },
-    {
-        label = "Use vanilla sky textures?",
-        id = "useVanillaSkyTextures",
-        description =
-        "Additionally use vanilla textures for more variation and an occasional full-blown nostalgic experience. Textures must be unpacked in the Data Files\\Textures folder. BSA archives are not supported.",
-    },
-    {
-        label = "Enable randomised hours between weather changes?",
-        id = "dynamicWeatherChanges",
-        description =
-        "Makes weather changes occur at random intervals instead of fixed times, creating a more unpredictable environment.",
-    },
-    {
-        label = "Enable weather changes in interiors?",
-        id = "interiorTransitions",
-        description =
-        "Allows interior areas to process weather changes. Best paired with AURA, so you can hear the weather change outside too.",
-    },
-    {
-        label = "Enable seasonal weather?",
-        id = "seasonalWeather",
-        description =
-        "Adjusts weather patterns (chances) according to the in-game season (month). Simulates rainy season and an occasional ashstorm or snowfall even in the beloved Balmora.",
-    },
-    {
-        label = "Enable seasonal daytime hours?",
-        id = "seasonalDaytime",
-        description =
-        "Changes the length of day/night to match the in-game season and latitude.",
-    },
-    {
-        label = "Enable randomised max particles?",
-        id = "particleAmount",
-        description =
-        "Randomises the maximum number of weather particles for more natural effects. Built-in compatibility with MCP particle occlusion.",
-    },
-    {
-        label = "Enable randomised clouds speed?",
-        id = "cloudSpeed",
-        description =
-        "Varies the speed at which clouds move across the sky. Interops with AURA for varied wind sound effects.",
-    },
-    {
-        label = "Enable randomised rain and snow particle meshes?",
-        id = "particleMesh",
-        restartRequired = true,
-        description =
-        "Randomises the shapes of rain and snow particles for visual variety. Requires restart.",
-    },
-    {
-        label = "Enable variable fog?",
-        id = "variableFog",
-        description =
-        "Dynamically adjusts fog distance and offset for more realistic environments. Overall more foggy, more vanilla-like feeling.",
-    },
-    {
-        label = "Enable weather flow constraints?",
-        id = "weatherFlow",
-        description =
-        "Controls allowed weather transitions and introduces intermediate steps for smoother changes. This will give a more organic overall feel with no sudden, unnatural transitions.",
-    },
+-- =========================
+-- Sky & Clouds
+-- =========================
+mainPage:createCategory { label = "Sky textures" }
+mainPage:createYesNoButton {
+    label = "Enable randomised cloud textures?",
+    description = "Randomises cloud textures for a more varied and dynamic sky appearance.",
+    variable = registerVariable("skyTexture"),
+}
+mainPage:createYesNoButton {
+    label = "Use vanilla sky textures?",
+    description = "Additionally use vanilla textures for more variation. Textures must be unpacked in the Data Files\\Textures folder.",
+    variable = registerVariable("useVanillaSkyTextures"),
+}
+mainPage:createYesNoButton {
+    label = "Enable variable rain textures?",
+    description = "Uses a three-tiered system (light, medium, heavy) for rainy weather type based on max particles. Interops with AURA.\n\n!!! WARNING !!! This will temporarily overwrite your Weather Adjuster preset. Do not save the preset unless this option is off.",
+    variable = registerVariable("variableRain"),
 }
 
-
-for _, setting in ipairs(settings) do
-    mainPage:createYesNoButton {
-        label = setting.label,
-        description = setting.description,
-        variable = registerVariable(setting.id),
-        restartRequired = setting.restartRequired,
-    }
-end
-
--- cloud speed dropdown
+mainPage:createCategory { label = "Cloud speed" }
+mainPage:createYesNoButton {
+    label = "Enable randomised clouds speed?",
+    description = "Varies the speed at which clouds move across the sky. Interops with AURA for wind sound effects.",
+    variable = registerVariable("cloudSpeed"),
+}
 mainPage:createDropdown {
     label = "Cloud speed mode:",
-    description = "Select the cloud speed mode. 'Vanilla' keeps standard speed, 'Skies .iv' is faster and works with Skies .iv meshes.",
+    description = "Select cloud speed mode. 'Vanilla' keeps standard speed, 'Skies .iv' is faster and works with Skies .iv meshes.",
     options = {
         { label = "Vanilla",   value = 100 },
         { label = "Skies .iv", value = 500 },
@@ -157,11 +88,60 @@ mainPage:createDropdown {
     variable = registerVariable("cloudSpeedMode"),
 }
 
+-- =========================
+-- Weather Dynamics
+-- =========================
+mainPage:createCategory { label = "Weather dynamics:" }
+mainPage:createYesNoButton {
+    label = "Enable randomised hours between weather changes?",
+    description = "Makes weather changes occur at random intervals for a more unpredictable environment.",
+    variable = registerVariable("dynamicWeatherChanges"),
+}
+mainPage:createYesNoButton {
+    label = "Enable weather changes in interiors?",
+    description = "Allows interior areas to process weather changes. Best paired with AURA.",
+    variable = registerVariable("interiorTransitions"),
+}
+mainPage:createYesNoButton {
+    label = "Enable seasonal weather?",
+    description = "Adjusts weather patterns according to the in-game season (month).",
+    variable = registerVariable("seasonalWeather"),
+}
+mainPage:createYesNoButton {
+    label = "Enable seasonal daytime hours?",
+    description = "Changes the length of day/night to match the in-game season and latitude.",
+    variable = registerVariable("seasonalDaytime"),
+}
+mainPage:createYesNoButton {
+    label = "Enable weather flow constraints?",
+    description = "Controls allowed weather transitions and introduces intermediate steps for smoother changes.",
+    variable = registerVariable("weatherFlow"),
+}
+
+-- =========================
+-- Particles & Fog
+-- =========================
+mainPage:createCategory { label = "Particles & fog:" }
+mainPage:createYesNoButton {
+    label = "Enable randomised max particles?",
+    description = "Randomises the maximum number of weather particles for more natural effects.",
+    variable = registerVariable("particleAmount"),
+}
+mainPage:createYesNoButton {
+    label = "Enable randomised rain and snow particle meshes?",
+    description = "Randomises the shapes of rain and snow particles for visual variety. Requires restart.",
+    variable = registerVariable("particleMesh"),
+    restartRequired = true,
+}
+mainPage:createYesNoButton {
+    label = "Enable variable fog?",
+    description = "Dynamically adjusts fog distance and offset for more realistic environments.",
+    variable = registerVariable("variableFog"),
+}
 
 -- onClose: start/stop only changed services + handle vanilla textures
 template.onClose = function()
     local oldConfig = mwse.loadConfig(configPath) or {}
-
     mwse.saveConfig(configPath, config)
 
     -- Handle overall mod disable

@@ -51,7 +51,7 @@ events.services.skyTexture = {
 		debugLog("Initialising skyTexture service...")
 		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
 		registerEvents(events.services.skyTexture, {
-			{ event = tes3.event.loaded, func = skyTexture.startTimer },
+			{ event = tes3.event.loaded, func = skyTexture.startTimer, opts = { priority = -250 } },
 		})
 		skyTexture.init({ immediate = true })
 		debugLog("skyTexture service initialized.")
@@ -62,6 +62,35 @@ events.services.skyTexture = {
 		unregisterEvents(events.services.skyTexture)
 		skyTexture.restoreDefaults()
 		debugLog("skyTexture service stopped.")
+	end,
+}
+
+-- variableRain service
+events.services.variableRain = {
+	init = function()
+		local config = require("tew.Watch the Skies.config")
+		if not config.skyTexture then
+			debugLog("variableRain service skipped: skyTexture setting is disabled")
+			return
+		end
+
+		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
+		skyTexture.randomise(true) -- invoke existing function with immediate = true
+		debugLog("variableRain service initialised: applied randomisation")
+	end,
+	stop = function()
+		local config = require("tew.Watch the Skies.config")
+		if not config.skyTexture then
+			return
+		end
+
+		local util = require("tew.Watch the Skies.util")
+		util.restoreDefaultRainColours()
+
+		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
+		skyTexture.randomise(true)
+
+		debugLog("variableRain service stopped: all weather colours restored")
 	end,
 }
 
@@ -92,7 +121,7 @@ events.services.particleAmount = {
 		local svc = require("tew.Watch the Skies.services.particleAmount")
 		svc.init()
 		registerEvents(events.services.particleAmount, {
-			{ event = tes3.event.loaded, func = svc.startTimer },
+			{ event = tes3.event.loaded, func = svc.startTimer, opts = { priority = -150 } },
 		})
 		debugLog("particleAmount service initialized.")
 	end,

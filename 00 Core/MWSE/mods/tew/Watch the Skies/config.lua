@@ -13,4 +13,5 @@ return mwse.loadConfig("Watch the Skies", {
     useVanillaSkyTextures = true,
     variableFog = true,
     weatherFlow = true,
+    variableRain = true,
 })

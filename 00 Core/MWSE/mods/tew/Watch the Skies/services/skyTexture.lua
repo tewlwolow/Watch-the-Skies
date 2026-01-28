@@ -7,6 +7,7 @@ local debugLog = common.debugLog
 local config = require("tew.Watch the Skies.config")
 local WtSdir = "Data Files\\Textures\\tew\\Watch the Skies"
 local WtC = tes3.worldController.weatherController
+local util = require("tew.Watch the Skies.util")
 
 --------------------------------------------------------------------------------------
 
@@ -15,27 +16,15 @@ for i = 1, 10 do
 	skyTextures[i] = {}
 end
 
+local rainTextures = {
+	["light"] = {},
+	["medium"] = {},
+	["heavy"] = {},
+}
+
 local defaultSkyTextures = {}
 for i = 1, 10 do
 	defaultSkyTextures[i] = ""
-end
-
---------------------------------------------------------------------------------------
-
-local function updateController()
-	if not WtC then return end
-
-	if WtC.nextWeather then
-		local t = WtC.transitionScalar
-		WtC:switchTransition(WtC.nextWeather.index)
-		WtC.transitionScalar = t
-	else
-		WtC:switchImmediate(WtC.currentWeather.index)
-	end
-
-	if tes3.player then
-		WtC:updateVisuals()
-	end
 end
 
 --------------------------------------------------------------------------------------
@@ -57,7 +46,7 @@ function skyTexture.restoreDefaults()
 			debugLog("Restored default texture for weather: " .. w.name .. " - " .. defaultSkyTextures[i])
 		end
 	end
-	updateController()
+	util.updateController()
 	debugLog("All sky textures restored to defaults.")
 end
 
@@ -89,27 +78,59 @@ end
 --------------------------------------------------------------------------------------
 
 function skyTexture.randomise(immediate)
-	local weatherNow
-	if WtC then
-		weatherNow = WtC.currentWeather
-	end
+	local weatherNow = WtC and WtC.currentWeather
 	if WtC.nextWeather then return end
 
 	debugLog("Starting cloud texture randomisation.")
+
+	local defaultsRestored = false
+
 	for index, weather in ipairs(WtC.weathers) do
-		if weatherNow and weatherNow.index == index and not immediate then goto continue end
+		-- Skip the currently active weather if not immediate
+		if weatherNow and weatherNow.index == index and not immediate then
+			goto continue
+		end
+
 		local textureList = skyTextures[index]
+
+		if config.variableRain then
+			if index == 5 then
+				-- Rain weather
+				local rainType, glare = util.getRainType(weather.maxParticles or 0)
+				debugLog("Detected rain type: " .. rainType .. ", setting glare to: " .. tostring(glare))
+				textureList = rainTextures[rainType]
+				weather.glareView = glare
+				util.adjustColours(rainType)
+			else
+				-- Restore defaults once
+				if not defaultsRestored then
+					util.restoreDefaultRainColours()
+					defaultsRestored = true
+				end
+			end
+		end
+
+		-- Log which list and its size
+		local listUsed = (index == 5) and ("rainTextures[" .. util.getRainType(weather.maxParticles or 0) .. "]") or
+			"skyTextures"
+		debugLog(string.format(
+			"Weather: %s | Using: %s | Texture count: %d",
+			weather.name, listUsed, #textureList
+		))
+
+		-- Apply a random texture if available
 		if #textureList > 0 then
 			local i = math.random(#textureList)
 			local texturePath = textureList[i]
 			weather.cloudTexture = texturePath
 			debugLog("Cloud texture path set: " .. weather.name .. " >> " .. weather.cloudTexture)
 		end
+
 		::continue::
 	end
 
 	if immediate then
-		updateController()
+		util.updateController()
 	end
 end
 
@@ -120,18 +141,47 @@ function skyTexture.init(params)
 
 	local immediate = params and params.immediate or false
 
-	-- Populate texture tables
+	-- Helper: add valid texture files from a directory if it exists
+	local function addTexturesFromDir(dirPath, list)
+		local attr = lfs.attributes(dirPath, "mode")
+		if attr ~= "directory" then
+			debugLog("Directory not found or inaccessible: " .. tostring(dirPath))
+			return
+		end
+
+		for file in lfs.dir(dirPath) do
+			if file ~= "." and file ~= ".." then
+				local lower = file:lower()
+				if lower:endswith(".dds") or lower:endswith(".tga") then
+					local fullPath = dirPath .. "\\" .. file
+					table.insert(list, fullPath)
+					debugLog("File added: " .. fullPath)
+				end
+			end
+		end
+	end
+
+	-- Populate texture tables if empty
 	if table.empty(skyTextures, true) then
 		for name, index in pairs(tes3.weather) do
 			local weatherPath = WtSdir .. "\\" .. name
-			for sky in lfs.dir(weatherPath) do
-				if sky ~= ".." and sky ~= "." then
-					local texturePath = weatherPath .. "\\" .. sky
-					if string.endswith(sky, ".dds") or string.endswith(sky, ".tga") then
-						table.insert(skyTextures[index + 1], texturePath)
-						debugLog("File added: " .. texturePath)
-					end
+			local skyList = skyTextures[index + 1]
+			local lowerName = name:lower()
+
+			if lowerName == "rain" then
+				-- Add rain/common textures
+				local commonDir = weatherPath .. "\\common"
+				addTexturesFromDir(commonDir, skyList)
+
+				-- Add variable rain textures (rain/light, rain/medium, rain/heavy)
+
+				for rainType, rainList in pairs(rainTextures) do
+					local rainDir = weatherPath .. "\\" .. rainType
+					addTexturesFromDir(rainDir, rainList)
 				end
+			else
+				-- Normal weather textures
+				addTexturesFromDir(weatherPath, skyList)
 			end
 		end
 	end
