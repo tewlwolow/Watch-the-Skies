@@ -45,6 +45,26 @@ events.services.particleMesh = {
 	end,
 }
 
+-- particleAmount
+events.services.particleAmount = {
+	init = function()
+		debugLog("Initialising particleAmount service...")
+		local svc = require("tew.Watch the Skies.services.particleAmount")
+		svc.init()
+		registerEvents(events.services.particleAmount, {
+			{ event = tes3.event.loaded, func = svc.startTimer, opts = { priority = -150 } },
+		})
+		debugLog("particleAmount service initialized.")
+	end,
+	stop = function()
+		debugLog("Stopping particleAmount service...")
+		local svc = require("tew.Watch the Skies.services.particleAmount")
+		unregisterEvents(events.services.particleAmount)
+		svc.restoreDefaults()
+		debugLog("particleAmount service stopped.")
+	end,
+}
+
 -- skyTexture
 events.services.skyTexture = {
 	init = function()
@@ -111,26 +131,6 @@ events.services.dynamicWeatherChanges = {
 		unregisterEvents(events.services.dynamicWeatherChanges)
 		svc.restoreDefaults()
 		debugLog("dynamicWeatherChanges service stopped.")
-	end,
-}
-
--- particleAmount
-events.services.particleAmount = {
-	init = function()
-		debugLog("Initialising particleAmount service...")
-		local svc = require("tew.Watch the Skies.services.particleAmount")
-		svc.init()
-		registerEvents(events.services.particleAmount, {
-			{ event = tes3.event.loaded, func = svc.startTimer, opts = { priority = -150 } },
-		})
-		debugLog("particleAmount service initialized.")
-	end,
-	stop = function()
-		debugLog("Stopping particleAmount service...")
-		local svc = require("tew.Watch the Skies.services.particleAmount")
-		unregisterEvents(events.services.particleAmount)
-		svc.restoreDefaults()
-		debugLog("particleAmount service stopped.")
 	end,
 }
 

@@ -54,10 +54,12 @@ function particleAmount.init()
 	WtC.weathers[5].particleRadius = 1500
 	WtC.weathers[6].particleRadius = 1700
 	WtC.weathers[9].particleRadius = 2000
+	particleAmount.randomise()
 end
 
 function particleAmount.randomise()
 	local currentWeatherIndex = WtC.currentWeather.index
+	if WtC.nextWeather then return end
 
 	for weather, values in pairs(particleAmountData) do
 		if (currentWeatherIndex ~= weather) then
