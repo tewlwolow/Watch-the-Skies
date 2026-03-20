@@ -7,9 +7,9 @@ local defaultGlare = 0.0
 
 -- master rain data
 local rainTypes = {
-	{ threshold = 2000, type = "light",  glare = 1.0 },
-	{ threshold = 2600, type = "medium", glare = 0.7 },
-	{ threshold = 5000, type = "heavy",  glare = defaultGlare },
+	{ threshold = 2000, type = "light",  glare = 1.0,          colourSource = 2 },
+	{ threshold = 2600, type = "medium", glare = 0.7,          colourSource = 3 },
+	{ threshold = 5000, type = "heavy",  glare = defaultGlare, colourSource = 5 },
 }
 
 function util.updateController()
@@ -58,57 +58,42 @@ function util.getRainType(particleAmount)
 	return fallback.type, fallback.glare
 end
 
-local function lerp(a, b, t)
-	return a + (b - a) * t
-end
-
-local function lerpColor(c1, c2, t)
-	return tes3vector3.new(
-		lerp(c1.r, c2.r, t),
-		lerp(c1.g, c2.g, t),
-		lerp(c1.b, c2.b, t)
-	)
-end
-
 function util.adjustColours(rainType)
 	debugLog("Adjusting colours for rainType '" .. rainType .. "'")
 
 	local WtC      = tes3.worldController.weatherController
-	local srcIndex = (rainType == "light") and 2 or 5
+	local srcIndex = rainLookup[rainType].colourSource or 5
 	local src      = WtC.weathers[srcIndex]
 	local dst      = WtC.weathers[5]
 
 	local glare    = rainLookup[rainType].glare or defaultGlare
-
-	-- small helper: boost saturation in RGB
-	local function boostSaturation(color, factor)
-		local avg = (color.r + color.g + color.b) / 3
-		color.r = avg + (color.r - avg) * (1 + factor)
-		color.g = avg + (color.g - avg) * (1 + factor)
-		color.b = avg + (color.b - avg) * (1 + factor)
-		-- clamp
-		color.r = math.min(1, math.max(0, color.r))
-		color.g = math.min(1, math.max(0, color.g))
-		color.b = math.min(1, math.max(0, color.b))
-		return color
-	end
-
-	local satBoost = 0.1 -- adjust this for desired saturation increase
 
 	for _, key in ipairs({
 		"sunSunriseColor", "sunDayColor", "sunSunsetColor",
 		"skySunriseColor", "skyDayColor", "skySunsetColor",
 		"fogSunriseColor", "fogDayColor", "fogSunsetColor",
 	}) do
-		local c = src[key]:copy()
-		dst[key] = boostSaturation(c, satBoost)
-		debugLog(string.format("%s | pre-boost = %.3f %.3f %.3f | post-boost = %.3f %.3f %.3f",
-			key, src[key].r, src[key].g, src[key].b, dst[key].r, dst[key].g, dst[key].b))
+		local s, d = src[key]:copy(), dst[key]:copy()
+
+		dst[key].r = math.lerp(s.r, d.r, 0.7)
+		dst[key].g = math.lerp(s.g, d.g, 0.65)
+		dst[key].b = math.lerp(s.b, d.b, 0.7)
+
+		debugLog(string.format(
+			"%s | pre = %.3f %.3f %.3f | post = %.3f %.3f %.3f",
+			key,
+			src[key].r, src[key].g, src[key].b,
+			dst[key].r, dst[key].g, dst[key].b
+		))
 	end
 
 	dst.glareView = glare
 
-	debugLog(string.format("Applied %s rain colours from weather[%d], glare=%.2f", rainType, srcIndex, glare))
+	debugLog(string.format(
+		"Applied %s rain colours from weather[%d], glare=%.2f",
+		rainType, srcIndex, glare
+	))
+
 	util.updateController()
 end
 
