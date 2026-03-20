@@ -33,7 +33,7 @@ local function canTransition(from, to)
 end
 
 local function pickIntermediate(from, to)
-    if from == 6 or from == 7 then return 0 end -- ash & blight → clear
+    if (from == 6 or from == 7) or (from == 4 and common.rainType == "light") then return 0 end -- ash & blight → clear, light rain → clear
     local list = allowed[from]
     for _, candidate in ipairs(list) do
         if candidate ~= to then return candidate end

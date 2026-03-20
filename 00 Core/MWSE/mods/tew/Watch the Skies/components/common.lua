@@ -5,6 +5,8 @@ local metadata = toml.loadMetadata("Watch the Skies")
 
 common.centralTimerDuration = 8
 
+common.rainType = ""
+
 function common.debugLog(message)
     if not debugLogOn then return end
 
@@ -14,6 +16,5 @@ function common.debugLog(message)
     local aligned = ("%-36s"):format(prepend)
     mwse.log(aligned .. " -- " .. string.format("%s", message))
 end
-
 
 return common

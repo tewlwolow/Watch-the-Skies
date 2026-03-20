@@ -98,6 +98,7 @@ function skyTexture.randomise(immediate)
 				-- Rain weather
 				local rainType, glare = util.getRainType(weather.maxParticles or 0)
 				debugLog("Detected rain type: " .. rainType .. ", setting glare to: " .. tostring(glare))
+				common.rainType = rainType -- For interop
 				textureList = rainTextures[rainType]
 				weather.glareView = glare
 				util.adjustColours(rainType)
