@@ -75,9 +75,9 @@ function util.adjustColours(rainType)
 	}) do
 		local s, d = src[key]:copy(), dst[key]:copy()
 
-		dst[key].r = math.lerp(s.r, d.r, 0.7)
-		dst[key].g = math.lerp(s.g, d.g, 0.65)
-		dst[key].b = math.lerp(s.b, d.b, 0.7)
+		dst[key].r = math.lerp(s.r, d.r, 0.8)
+		dst[key].g = math.lerp(s.g, d.g, 0.78)
+		dst[key].b = math.lerp(s.b, d.b, 0.83)
 
 		debugLog(string.format(
 			"%s | pre = %.3f %.3f %.3f | post = %.3f %.3f %.3f",
