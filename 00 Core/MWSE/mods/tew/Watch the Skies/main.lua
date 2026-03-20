@@ -19,6 +19,9 @@ local function init()
 	end
 end
 
+-- For TR/PT updates etc.
+-- event.register(tes3.event.loaded, util.getRegionWeatherChances)
+
 event.register(tes3.event.initialized, init, { priority = -150 })
 
 -- Registers MCM menu --

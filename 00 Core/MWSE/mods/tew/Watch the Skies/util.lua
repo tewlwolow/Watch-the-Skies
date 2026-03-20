@@ -97,6 +97,50 @@ function util.adjustColours(rainType)
 	util.updateController()
 end
 
+function util.getRegionWeatherChances()
+	local seasonalChances = require("tew.Watch the Skies.components.seasonalChances")
+
+	for region in tes3.iterate(tes3.dataHandler.nonDynamicData.regions) do
+		if not seasonalChances[region.id] then
+			local values = string.format(
+				"{ %d, %d, %d, %d, %d, %d, %d, %d, %d, %d }",
+				region.weatherChanceClear,
+				region.weatherChanceCloudy,
+				region.weatherChanceFoggy,
+				region.weatherChanceOvercast,
+				region.weatherChanceRain,
+				region.weatherChanceThunder,
+				region.weatherChanceAsh,
+				region.weatherChanceBlight,
+				region.weatherChanceSnow,
+				region.weatherChanceBlizzard
+			)
+
+			mwse.log(string.format([[
+			["%s"] = {
+				[1] = %s,
+				[2] = %s,
+				[3] = %s,
+				[4] = %s,
+				[5] = %s,
+				[6] = %s,
+				[7] = %s,
+				[8] = %s,
+				[9] = %s,
+				[10] = %s,
+				[11] = %s,
+				[12] = %s,
+			},
+			]],
+				region.name,
+				values, values, values, values,
+				values, values, values, values,
+				values, values, values, values
+			))
+		end
+	end
+end
+
 function util.restoreDefaultRainColours()
 	local WtC = tes3.worldController.weatherController
 	local rainWeather = WtC.weathers[5]
