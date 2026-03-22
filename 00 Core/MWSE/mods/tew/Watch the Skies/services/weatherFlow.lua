@@ -1,9 +1,10 @@
-local weatherTransitions = {}
+local weatherFlow = {}
 
 --------------------------------------------------------------------------------------
 
 local common = require("tew.Watch the Skies.components.common")
 local debugLog = common.debugLog
+local flowTimer
 
 --------------------------------------------------------------------------------------
 
@@ -61,7 +62,7 @@ end
 
 --------------------------------------------------------------------------------------
 
-function weatherTransitions.handleTransition(e)
+function weatherFlow.handleTransition(e)
     if transitionLock then
         debugLog("Transition skipped, another transition in progress.")
         return
@@ -86,7 +87,7 @@ function weatherTransitions.handleTransition(e)
         transitionLock = true
         WtC:switchTransition(intermediate)
 
-        timer.start {
+        flowTimer = timer.start {
             duration = 0.6,
             callback = function()
                 local intermediateNow = WtC.currentWeather.index
@@ -104,15 +105,25 @@ function weatherTransitions.handleTransition(e)
     else
         debugLog(string.format("Valid transition %d → %d", from, to))
     end
+
+    e.claim = true
+end
+
+function weatherFlow.clearFlowTimer()
+    transitionLock = false
+    if flowTimer then
+        flowTimer:cancel()
+    end
 end
 
 --------------------------------------------------------------------------------------
 
 event.register(tes3.event.loaded, function()
     transitionLock = false
+    weatherFlow.clearFlowTimer()
     debugLog("Transition lock cleared on game load.")
 end)
 
 --------------------------------------------------------------------------------------
 
-return weatherTransitions
+return weatherFlow
