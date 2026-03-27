@@ -4,7 +4,7 @@ local debugLogOn = config.debugLogOn
 local metadata = toml.loadMetadata("Watch the Skies")
 
 common.centralTimerDuration = 8
-
+common.defaultsRestored = false
 common.rainType = ""
 
 function common.debugLog(message)

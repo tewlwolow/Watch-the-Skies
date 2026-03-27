@@ -83,8 +83,6 @@ function skyTexture.randomise(immediate)
 
 	debugLog("Starting cloud texture randomisation.")
 
-	local defaultsRestored = false
-
 	for index, weather in ipairs(WtC.weathers) do
 		-- Skip the currently active weather if not immediate
 		if weatherNow and weatherNow.index == index and not immediate then
@@ -104,9 +102,9 @@ function skyTexture.randomise(immediate)
 				util.adjustColours(rainType)
 			else
 				-- Restore defaults once
-				if not defaultsRestored then
+				if not common.defaultsRestored then
 					util.restoreDefaultRainColours()
-					defaultsRestored = true
+					common.defaultsRestored = true
 				end
 			end
 		end
@@ -198,7 +196,7 @@ function skyTexture.init(params)
 end
 
 function skyTexture.startTimer()
-	skyTexture.randomise()
+	-- skyTexture.randomise() -- auto switch bug?
 	timer.start {
 		duration = common.centralTimerDuration,
 		callback = skyTexture.randomise,
