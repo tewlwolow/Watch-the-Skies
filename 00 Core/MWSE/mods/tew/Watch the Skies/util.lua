@@ -67,7 +67,7 @@ function util.adjustColours(rainType)
 	local dst        = WtC.weathers[5]
 
 	local glare      = rainLookup[rainType].glare or defaultGlare
-	local brightness = rainLookup[rainType].brightness or 0.87
+	local brightness = rainLookup[rainType].brightness or 0.95
 	local desat      = rainLookup[rainType].desaturation or 0.9
 	local t          = 0.8
 
