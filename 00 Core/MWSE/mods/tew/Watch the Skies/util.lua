@@ -16,13 +16,13 @@ function util.updateController()
 	local WtC = tes3.worldController.weatherController
 	if not WtC then return end
 
-	if WtC.nextWeather then
-		local t = WtC.transitionScalar
-		WtC:switchTransition(WtC.nextWeather.index)
-		WtC.transitionScalar = t
-	else
-		WtC:switchImmediate(WtC.currentWeather.index)
-	end
+	-- if WtC.nextWeather then
+	-- 	local t = WtC.transitionScalar
+	-- 	WtC:switchTransition(WtC.nextWeather.index)
+	-- 	WtC.transitionScalar = t
+	-- else
+	-- 	WtC:switchImmediate(WtC.currentWeather.index)
+	-- end
 
 	if tes3.player then
 		WtC:updateVisuals()
