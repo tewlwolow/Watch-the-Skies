@@ -85,7 +85,9 @@ function weatherFlow.handleTransition(e)
         debugLog(string.format("Invalid transition %d → %d, redirecting via intermediate %d", from, to, intermediate))
 
         transitionLock = true
-        WtC:switchTransition(intermediate)
+        local t = WtC.transitionScalar
+        WtC:switchTransition(WtC.nextWeather.index)
+        WtC.transitionScalar = t
 
         flowTimer = timer.start {
             duration = 0.6,
