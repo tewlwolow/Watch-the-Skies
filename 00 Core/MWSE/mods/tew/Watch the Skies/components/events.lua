@@ -235,23 +235,4 @@ events.services.variableFog = {
 	end,
 }
 
--- weatherFlow
-events.services.weatherFlow = {
-	init = function()
-		debugLog("Initialising weatherFlow service...")
-		local wf = require("tew.Watch the Skies.services.weatherFlow")
-		registerEvents(events.services.weatherFlow, {
-			{ event = tes3.event.weatherTransitionStarted, func = wf.handleTransition,               opts = { priority = -250 } },
-			{ event = tes3.event.loaded,                   func = function() wf.clearFlowTimer() end },
-			{ event = tes3.event.weatherChangedImmediate,  func = function() wf.clearFlowTimer() end },
-		})
-		debugLog("weatherFlow service initialized.")
-	end,
-	stop = function()
-		debugLog("Stopping weatherFlow service...")
-		unregisterEvents(events.services.weatherFlow)
-		debugLog("weatherFlow service stopped.")
-	end,
-}
-
 return events

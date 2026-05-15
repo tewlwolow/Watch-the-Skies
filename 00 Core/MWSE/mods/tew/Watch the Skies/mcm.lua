@@ -112,11 +112,6 @@ mainPage:createYesNoButton {
     description = "Changes the length of day/night to match the in-game season and latitude.",
     variable = registerVariable("seasonalDaytime"),
 }
-mainPage:createYesNoButton {
-    label = "Enable weather flow constraints?",
-    description = "Controls allowed weather transitions and introduces intermediate steps for smoother changes.",
-    variable = registerVariable("weatherFlow"),
-}
 
 -- =========================
 -- Particles & Fog
