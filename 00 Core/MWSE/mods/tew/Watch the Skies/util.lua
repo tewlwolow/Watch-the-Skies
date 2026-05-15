@@ -8,7 +8,7 @@ local defaultGlare = 0.0
 -- master rain data
 local rainTypes = {
 	{ threshold = 1400, type = "light",  glare = 1.0,          colourSource = 2 },
-	{ threshold = 2100, type = "medium", glare = 0.7,          colourSource = 3 },
+	{ threshold = 2100, type = "medium", glare = 0.8,          colourSource = 3 },
 	{ threshold = 2800, type = "heavy",  glare = defaultGlare, colourSource = 5 },
 }
 
@@ -68,8 +68,8 @@ function util.adjustColours(rainType)
 
 	local glare      = rainLookup[rainType].glare or defaultGlare
 	local brightness = rainLookup[rainType].brightness or 0.95
-	local desat      = rainLookup[rainType].desaturation or 0.9
-	local t          = 0.8
+	local desat      = rainLookup[rainType].desaturation or 0.95
+	local t          = 0.95
 
 	for _, key in ipairs({
 		"sunSunriseColor", "sunDayColor", "sunSunsetColor",
