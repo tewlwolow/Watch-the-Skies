@@ -6,6 +6,7 @@ local common = require("tew.Watch the Skies.components.common")
 local debugLog = common.debugLog
 local WtC = tes3.worldController.weatherController
 local intWeatherTimer
+local intFlag = 0
 
 --------------------------------------------------------------------------------------
 
@@ -101,5 +102,44 @@ function interiorTransitions.onCellChanged(e)
 end
 
 --------------------------------------------------------------------------------------
+
+function interiorTransitions.stopSounds()
+	local cell = tes3.getPlayerCell()
+	local cw = WtC.currentWeather
+	local nw = WtC.nextWeather
+
+	if cell.isOrBehavesAsExterior then
+		if intFlag == 1 then
+			if cw.rainLoopSound then
+				cw.rainLoopSound:play()
+				intFlag = 0
+			end
+			if cw.ambientLoopSound then
+				cw.ambientLoopSound:play()
+				intFlag = 0
+			end
+		else
+			return
+		end
+	end
+
+	local function run()
+		debugLog("Checking if we need to stop rain sound.")
+		if cw.rainLoopSound then
+			debugLog("Stopping rain sound.")
+			cw.rainLoopSound:stop()
+			intFlag = 1
+		end
+
+		if cw.ambientLoopSound then
+			cw.ambientLoopSound:stop()
+			intFlag = 1
+		end
+	end
+
+	timer.delayOneFrame(run)
+end
+
+-----------------------------------------------------------------------------------------
 
 return interiorTransitions
