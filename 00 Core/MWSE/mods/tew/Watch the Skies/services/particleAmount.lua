@@ -62,7 +62,7 @@ function particleAmount.randomise()
 	if WtC.nextWeather then return end
 
 	for weather, values in pairs(particleAmountData) do
-		if (currentWeatherIndex ~= weather) then
+		if (currentWeatherIndex + 1 ~= weather) then
 			WtC.weathers[weather].maxParticles = table.choice(values)
 		end
 	end
