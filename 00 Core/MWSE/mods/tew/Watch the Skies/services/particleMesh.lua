@@ -1,24 +1,26 @@
-local particleMesh     = {}
+local particleMesh = {}
 
 --------------------------------------------------------------------------------------
 
-local common           = require("tew.Watch the Skies.components.common")
-local util             = require("tew.Watch the Skies.util")
-local debugLog         = common.debugLog
-local WtC              = tes3.worldController.weatherController
+local common = require("tew.Watch the Skies.components.common")
+local debugLog = common.debugLog
+local WtC = tes3.worldController.weatherController
+
 local newParticleMesh
 local particleNode
-local swapQueue        = nil
-local swapIndex        = 1
-local particlesPath    = "Data Files\\Meshes\\tew\\Watch the Skies\\particles"
-local meshRoot         = "tew\\Watch the Skies\\particles"
+
+local swapQueue = nil
+local swapIndex = 1
+
+local meshRoot = "tew\\Watch the Skies\\particles\\"
+local particlesPath = "Data Files\\Meshes\\" .. meshRoot
 
 --------------------------------------------------------------------------------------
 
-local SNOW_POINT       = 0.2
-local RAIN_POINT       = 0.1
+local SNOW_POINT = 0.2
+local RAIN_POINT = 0.1
 
-local particles        = {
+local particles = {
 	["rain"] = {},
 	["snow"] = {},
 }
@@ -32,31 +34,59 @@ local weatherChecklist = {
 --------------------------------------------------------------------------------------
 
 function particleMesh.init()
+	if lfs.attributes(particlesPath, "mode") ~= "directory" then
+		debugLog("Particles path not found: " .. particlesPath)
+		return
+	end
+
 	for particleTypeFolder in lfs.dir(particlesPath) do
-		if particleTypeFolder and particleTypeFolder ~= ".." and particleTypeFolder ~= "." then
-			for particle in lfs.dir(particlesPath .. "\\" .. particleTypeFolder) do
-				if particle and particle ~= ".." and particle ~= "." and string.endswith(particle:lower(), ".nif") then
-					particleMesh = tes3.loadMesh(
-						meshRoot
-						.. "\\"
-						.. particleTypeFolder
-						.. "\\"
-						.. particle
-					)
-					table.insert(particles[particleTypeFolder], particleMesh)
+		if particleTypeFolder
+			and particleTypeFolder ~= ".."
+			and particleTypeFolder ~= "."
+		then
+			if particles[particleTypeFolder] then
+				for particle in lfs.dir(
+					particlesPath .. "\\" .. particleTypeFolder
+				) do
+					if particle
+						and particle ~= ".."
+						and particle ~= "."
+						and string.endswith(particle:lower(), ".nif")
+					then
+						table.insert(
+							particles[particleTypeFolder],
+							particle
+						)
+					end
 				end
 			end
 		end
 	end
+
+	for particleType, particleList in pairs(particles) do
+		for i, particle in ipairs(particleList) do
+			particleList[i] = tes3.loadMesh(
+				meshRoot
+				.. particleType
+				.. "\\"
+				.. particle
+			)
+		end
+	end
 end
+
+--------------------------------------------------------------------------------------
 
 local function getBleachedColour(comp, point)
 	return math.clamp(math.lerp(comp, 1.0, point), 0.03, 0.88)
 end
 
-local function getModifiedColour(weatherColour)
+function particleMesh.getModifiedColour(weatherColour)
 	local colours
-	if (WtC.currentWeather.name) == "Snow" or (WtC.nextWeather and WtC.nextWeather.name == "Snow") then
+
+	if (WtC.currentWeather.name) == "Snow"
+		or (WtC.nextWeather and WtC.nextWeather.name == "Snow")
+	then
 		colours = {
 			r = getBleachedColour(weatherColour.r, SNOW_POINT),
 			g = getBleachedColour(weatherColour.g, SNOW_POINT),
@@ -69,25 +99,14 @@ local function getModifiedColour(weatherColour)
 			b = getBleachedColour(weatherColour.b, RAIN_POINT),
 		}
 	end
+
 	return colours
 end
 
-local function isValidWeather()
-	local current = WtC.currentWeather.name
-	local nextW = WtC.nextWeather and WtC.nextWeather.name
+--------------------------------------------------------------------------------------
+-- Change particle mesh colours in real-time
+--------------------------------------------------------------------------------------
 
-	return
-		(current == "Rain"
-			or current == "Thunderstorm"
-			or current == "Snow")
-		and
-		((not nextW)
-			or nextW == "Rain"
-			or nextW == "Thunderstorm"
-			or nextW == "Snow")
-end
-
--- Change particle mesh colours in real-time --
 local frameCounter = 0
 
 local lastColours = {
@@ -105,14 +124,14 @@ function particleMesh.reColourParticleMesh()
 
 	frameCounter = 0
 
-	if not isValidWeather()
+	if not particleMesh.isValidWeather()
 		or not newParticleMesh
 	then
 		return
 	end
 
 	local weatherColour = WtC.currentFogColor
-	local colours = getModifiedColour(weatherColour)
+	local colours = particleMesh.getModifiedColour(weatherColour)
 
 	if math.abs(colours.r - lastColours.r) < 0.005
 		and math.abs(colours.g - lastColours.g) < 0.005
@@ -141,12 +160,41 @@ function particleMesh.reColourParticleMesh()
 	end
 end
 
+--------------------------------------------------------------------------------------
+
+function particleMesh.isValidWeather()
+	local current = WtC.currentWeather.name
+	local nextW = WtC.nextWeather and WtC.nextWeather.name
+
+	return
+		(current == "Rain"
+			or current == "Thunderstorm"
+			or current == "Snow")
+		and
+		((not nextW)
+			or nextW == "Rain"
+			or nextW == "Thunderstorm"
+			or nextW == "Snow")
+end
+
+--------------------------------------------------------------------------------------
+
 local function swapNode(particle)
+	if not particle
+		or not particle.object
+		or not particle.rainRoot
+	then
+		return
+	end
+
 	local old = particle.object
+
 	particle.rainRoot:detachChild(old)
 
 	local new = newParticleMesh:clone()
+
 	particle.rainRoot:attachChild(new)
+
 	new.appCulled = old.appCulled
 
 	particle.object = new
@@ -186,7 +234,11 @@ local function processSwapQueue()
 	end
 end
 
-local function changeParticleMesh(particleType)
+--------------------------------------------------------------------------------------
+-- Get a new mesh and spread node swaps across frames
+--------------------------------------------------------------------------------------
+
+function particleMesh.changeParticleMesh(particleType)
 	event.unregister(tes3.event.enterFrame, processSwapQueue)
 
 	local particleList = particles[particleType]
@@ -200,8 +252,7 @@ local function changeParticleMesh(particleType)
 		return
 	end
 
-	local randomParticleMesh = table.choice(particles[particleType])
-	newParticleMesh = randomParticleMesh:clone()
+	newParticleMesh = table.choice(particleList)
 
 	particleNode = nil
 	lastColours.r = -1
@@ -224,23 +275,50 @@ local function changeParticleMesh(particleType)
 
 	event.register(tes3.event.enterFrame, processSwapQueue)
 
-	util.updateController()
-	WtC.sceneRainRoot:updateEffects()
-
 	debugLog(
-		"Rain mesh changed."
-		.. " (batched swap, "
+		"Rain mesh changed (batched swap, "
 		.. #swapQueue
 		.. " particles)"
 	)
 end
 
--- Check if we have the weather that warrants particle change --
+--------------------------------------------------------------------------------------
+-- Check if we have the weather that warrants particle change
+--------------------------------------------------------------------------------------
+
 function particleMesh.particleMeshChecker()
-	local weatherNow = WtC.nextWeather and WtC.nextWeather or WtC.currentWeather
-	local particleWeatherType = weatherChecklist[weatherNow.name]
-	if particleWeatherType ~= nil then
-		changeParticleMesh(particleWeatherType)
+	local weatherNow
+
+	if WtC.nextWeather then
+		weatherNow = WtC.nextWeather
+
+		local particleWeatherType =
+			weatherChecklist[weatherNow.name]
+
+		if particleWeatherType ~= nil then
+			timer.start {
+				duration = 0.2,
+
+				callback = function()
+					particleMesh.changeParticleMesh(
+						particleWeatherType
+					)
+				end,
+
+				type = timer.game,
+			}
+		end
+	else
+		weatherNow = WtC.currentWeather
+
+		local particleWeatherType =
+			weatherChecklist[weatherNow.name]
+
+		if particleWeatherType ~= nil then
+			particleMesh.changeParticleMesh(
+				particleWeatherType
+			)
+		end
 	end
 end
 
