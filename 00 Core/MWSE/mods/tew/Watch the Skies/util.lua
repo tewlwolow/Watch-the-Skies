@@ -58,6 +58,7 @@ function util.getRainType(particleAmount)
 	return fallback.type, fallback.glare
 end
 
+-- TODO: Figure out why this stopped working
 function util.adjustColours(rainType)
 	debugLog("Adjusting colours for rainType '" .. rainType .. "'")
 
