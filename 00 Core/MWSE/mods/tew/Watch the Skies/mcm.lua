@@ -68,7 +68,7 @@ mainPage:createYesNoButton {
 }
 mainPage:createYesNoButton {
     label = "Enable variable rain textures?",
-    description = "Uses a three-tiered system (light, medium, heavy) for rainy weather type based on max particles. Interops with AURA.\n\n!!! WARNING !!! This will temporarily overwrite your Weather Adjuster preset. Do not save the preset unless this option is off.",
+    description = "Uses a three-tiered system (light, medium, heavy) for rainy weather type based on max particles. Interops with AURA.\nVariable rain is dependent on sky texture randomisation option and will not work otherwise.\n\n!!! WARNING !!! This will temporarily overwrite your Weather Adjuster preset. Do not save the preset unless this option is off.",
     variable = registerVariable("variableRain"),
 }
 

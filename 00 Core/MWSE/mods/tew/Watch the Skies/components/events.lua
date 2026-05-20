@@ -71,7 +71,10 @@ events.services.skyTexture = {
 		debugLog("Initialising skyTexture service...")
 		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
 		registerEvents(events.services.skyTexture, {
-			{ event = tes3.event.loaded, func = skyTexture.startTimer, opts = { priority = -250 } },
+			{ event = tes3.event.loaded,                  func = skyTexture.startTimer, opts = { priority = -250 } },
+			{ event = tes3.event.loaded,                  func = skyTexture.randomise,  opts = { priority = -250 } },
+			{ event = tes3.event.cellChanged,             func = skyTexture.randomise,  opts = { priority = -250 } },
+			{ event = tes3.event.weatherChangedImmediate, func = skyTexture.randomise,  opts = { priority = -250 } },
 		})
 		skyTexture.init({ immediate = true })
 		debugLog("skyTexture service initialized.")
@@ -88,25 +91,38 @@ events.services.skyTexture = {
 -- variableRain service
 events.services.variableRain = {
 	init = function()
+		debugLog("Initialising variableRain service...")
+
+		-- variableRain defaults handling
+		local variableRain = require("tew.Watch the Skies.services.variableRain")
+		registerEvents(events.services.variableRain, {
+			{ event = tes3.event.load, func = variableRain.storeDefaultRainColours, opts = { priority = -250 } },
+		})
+
+		-- skyTexture hook
 		local config = require("tew.Watch the Skies.config")
 		if not config.skyTexture then
 			debugLog("variableRain service skipped: skyTexture setting is disabled")
 			return
 		end
-
 		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
 		skyTexture.randomise(true) -- invoke existing function with immediate = true
+
 		debugLog("variableRain service initialised: applied randomisation")
 	end,
 	stop = function()
+		debugLog("Stopping variableRain service...")
+
+		-- variableRain defaults handling
+		local variableRain = require("tew.Watch the Skies.services.variableRain")
+		unregisterEvents(events.services.variableRain)
+		variableRain.restoreDefaultRainColours()
+
+		-- skyTexture hook
 		local config = require("tew.Watch the Skies.config")
 		if not config.skyTexture then
 			return
 		end
-
-		local util = require("tew.Watch the Skies.util")
-		util.restoreDefaultRainColours()
-
 		local skyTexture = require("tew.Watch the Skies.services.skyTexture")
 		skyTexture.randomise(true)
 

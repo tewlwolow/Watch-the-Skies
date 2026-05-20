@@ -8,6 +8,7 @@ local config = require("tew.Watch the Skies.config")
 local WtSdir = "Data Files\\Textures\\tew\\Watch the Skies"
 local WtC = tes3.worldController.weatherController
 local util = require("tew.Watch the Skies.util")
+local variableRain = require("tew.Watch the Skies.services.variableRain")
 
 --------------------------------------------------------------------------------------
 
@@ -94,23 +95,18 @@ function skyTexture.randomise(immediate)
 		if config.variableRain then
 			if index == 5 then
 				-- Rain weather
-				local rainType, glare = util.getRainType(weather.maxParticles or 0)
+				local rainType, glare = variableRain.getRainType(weather.maxParticles or 0)
 				debugLog("Detected rain type: " .. rainType .. ", setting glare to: " .. tostring(glare))
 				common.rainType = rainType -- For interop
 				textureList = rainTextures[rainType]
 				weather.glareView = glare
-				util.adjustColours(rainType)
+				variableRain.adjustColours(rainType)
 			else
-				-- Restore defaults once
-				if not common.defaultsRestored then
-					util.restoreDefaultRainColours()
-					common.defaultsRestored = true
-				end
 			end
 		end
 
 		-- Log which list and its size
-		local listUsed = (index == 5) and ("rainTextures[" .. util.getRainType(weather.maxParticles or 0) .. "]") or
+		local listUsed = (index == 5) and ("rainTextures[" .. variableRain.getRainType(weather.maxParticles or 0) .. "]") or
 			"skyTextures"
 		debugLog(string.format(
 			"Weather: %s | Using: %s | Texture count: %d",
