@@ -77,6 +77,8 @@ function interiorTransitions.onCellChanged(e)
 	local cell = e.cell
 	if not cell then return end
 
+	interiorTransitions.stopSounds()
+
 	if cell.isOrBehavesAsExterior then
 		if intWeatherTimer then
 			intWeatherTimer:pause()
@@ -106,16 +108,17 @@ end
 function interiorTransitions.stopSounds()
 	local cell = tes3.getPlayerCell()
 	local cw = WtC.currentWeather
-	local nw = WtC.nextWeather
+	local rs = cw.rainLoopSound
+	local as = cw.ambientLoopSound
 
 	if cell.isOrBehavesAsExterior then
 		if intFlag == 1 then
-			if cw.rainLoopSound then
-				cw.rainLoopSound:play()
+			if rs and not rs:isPlaying() then
+				rs:play()
 				intFlag = 0
 			end
-			if cw.ambientLoopSound then
-				cw.ambientLoopSound:play()
+			if as and not as:isPlaying() then
+				as:play()
 				intFlag = 0
 			end
 		else
@@ -125,14 +128,14 @@ function interiorTransitions.stopSounds()
 
 	local function run()
 		debugLog("Checking if we need to stop rain sound.")
-		if cw.rainLoopSound then
+		if rs and rs:isPlaying() then
 			debugLog("Stopping rain sound.")
-			cw.rainLoopSound:stop()
+			rs:stop()
 			intFlag = 1
 		end
 
-		if cw.ambientLoopSound then
-			cw.ambientLoopSound:stop()
+		if as and as:isPlaying() then
+			as:stop()
 			intFlag = 1
 		end
 	end

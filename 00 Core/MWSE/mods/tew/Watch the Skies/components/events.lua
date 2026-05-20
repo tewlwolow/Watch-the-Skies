@@ -217,6 +217,7 @@ events.services.interiorTransitions = {
 		local svc = require("tew.Watch the Skies.services.interiorTransitions")
 		registerEvents(events.services.interiorTransitions, {
 			{ event = tes3.event.cellChanged,               func = svc.onCellChanged, opts = { priority = -150 } },
+			{ event = tes3.event.loaded,                    func = svc.stopSounds,    opts = { priority = -150 } },
 			{ event = tes3.event.weatherTransitionFinished, func = svc.stopSounds,    opts = { priority = -350 } },
 			{ event = tes3.event.weatherChangedImmediate,   func = svc.stopSounds,    opts = { priority = -350 } },
 		})
