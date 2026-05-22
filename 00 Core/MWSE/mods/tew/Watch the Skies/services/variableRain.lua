@@ -15,11 +15,10 @@ local colourKeys = {
 
 -- master rain data
 local rainTypes = {
-    { threshold = 1400, type = "light",  glare = 1.0,          colourSource = 2 },
-    { threshold = 2100, type = "medium", glare = 0.8,          colourSource = 3 },
-    { threshold = 2800, type = "heavy",  glare = defaultGlare, colourSource = 5 },
+    { threshold = 500,  type = "light",  glare = 1.0, colourSource = 2 },
+    { threshold = 1800, type = "medium", glare = 0.7, colourSource = 3 },
+    { threshold = 2800, type = "heavy",  glare = 0.0, colourSource = 5 },
 }
-
 -- quick lookup by name
 local rainLookup = {}
 for _, v in ipairs(rainTypes) do
