@@ -226,7 +226,6 @@ events.services.interiorTransitions = {
 	end,
 	stop = function()
 		debugLog("Stopping interiorTransitions service...")
-		local svc = require("tew.Watch the Skies.services.interiorTransitions")
 		unregisterEvents(events.services.interiorTransitions)
 		debugLog("interiorTransitions service stopped.")
 	end,
