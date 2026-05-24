@@ -73,7 +73,7 @@ local function applyFogToWeather(weatherIndex, region)
     local offset     = preset.offset
 
     -- Distance–offset compensation
-    local baseOffset = preset.offset + (1 - distance) * 234.57
+    local baseOffset = offset + (1 - distance) * 234.57
     baseOffset       = applyRandomVariation(baseOffset, 0.20)
 
     if weatherIndex == 0 or weatherIndex == 1 then
