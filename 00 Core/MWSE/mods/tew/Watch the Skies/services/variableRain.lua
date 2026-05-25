@@ -50,9 +50,9 @@ function variableRain.adjustColours(rainType)
     local dst        = WtC.weathers[5]
 
     local glare      = rainLookup[rainType].glare or defaultGlare
-    local brightness = rainLookup[rainType].brightness or 0.8
-    local desat      = rainLookup[rainType].desaturation or 0.86
-    local t          = 0.45
+    local brightness = rainLookup[rainType].brightness or 0.86
+    local desat      = rainLookup[rainType].desaturation or 0.75
+    local t          = 0.32
 
     for _, key in ipairs(colourKeys) do
         if src == dst then goto continue end
