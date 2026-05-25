@@ -238,9 +238,8 @@ events.services.variableFog = {
 		local svc = require("tew.Watch the Skies.services.variableFog")
 		svc.restoreDefaults()
 		registerEvents(events.services.variableFog, {
-			{ event = tes3.event.weatherTransitionStarted,  func = svc.applyFogOnWeatherChange },
-			{ event = tes3.event.weatherTransitionFinished, func = svc.applyFogOnWeatherChange },
-			{ event = tes3.event.weatherChangedImmediate,   func = svc.applyFogOnWeatherChange },
+			{ event = tes3.event.cellChanged,             func = svc.applyFog, opts = { priority = 1001 } },
+			{ event = tes3.event.weatherChangedImmediate, func = svc.applyFog, opts = { priority = 1001 } },
 		})
 		debugLog("variableFog service initialized.")
 	end,
