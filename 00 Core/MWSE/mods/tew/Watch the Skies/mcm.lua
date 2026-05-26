@@ -119,7 +119,7 @@ mainPage:createYesNoButton {
 mainPage:createCategory { label = "Particles & fog:" }
 mainPage:createYesNoButton {
     label = "Enable randomised max particles?",
-    description = "Randomises the maximum number of weather particles for more natural effects.",
+    description = "Randomises the maximum number of weather particles.",
     variable = registerVariable("particleAmount"),
 }
 mainPage:createYesNoButton {
@@ -130,7 +130,7 @@ mainPage:createYesNoButton {
 }
 mainPage:createYesNoButton {
     label = "Enable variable fog?",
-    description = "Dynamically adjusts fog distance and offset for more realistic environments.",
+    description = "Variable fog distance and offset per region and season in addition to weather.",
     variable = registerVariable("variableFog"),
 }
 
