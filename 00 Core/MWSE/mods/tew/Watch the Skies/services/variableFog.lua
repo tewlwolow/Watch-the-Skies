@@ -4,9 +4,10 @@ local variableFog         = {}
 local common              = require("tew.Watch the Skies.components.common")
 local debugLog            = common.debugLog
 local seasonalChances     = require("tew.Watch the Skies.components.seasonalChances")
+local lastRegion
 
 --------------------------------------------------------------------------------------
--- BASE FOG (UNCHANGED CORE VALUES)
+-- BASE FOG
 --------------------------------------------------------------------------------------
 local defaultFog          = {
     [0] = { distance = 1.0, offset = 0 },
@@ -35,7 +36,7 @@ local weatherCurveProfile = {
 }
 
 --------------------------------------------------------------------------------------
--- REGION CURVE MODIFIER (STRONGER)
+-- REGION CURVE MODIFIER
 --------------------------------------------------------------------------------------
 local function computeRegionCurve(region)
     if not region then return 1.0 end
@@ -51,7 +52,7 @@ local function computeRegionCurve(region)
 end
 
 --------------------------------------------------------------------------------------
--- SEASONAL CURVE MODIFIER (STRONGER + LESS FLAT)
+-- SEASONAL CURVE MODIFIER
 --------------------------------------------------------------------------------------
 local function computeSeasonCurve(region, weatherIndex)
     if not region then return 1.0 end
@@ -79,7 +80,7 @@ local function applyFogCurve(distance, curve)
 end
 
 --------------------------------------------------------------------------------------
--- RANDOM VARIATION (SUBTLE ONLY)
+-- RANDOM VARIATION
 --------------------------------------------------------------------------------------
 local function applyRandomVariation(value, variationPercent)
     local variation = value * variationPercent
@@ -94,13 +95,13 @@ local function applyFogToWeather(weatherIndex, region)
     if not preset then return end
 
     ----------------------------------------------------------------------------------
-    -- BASE VALUE (NO EARLY RANDOMNESS)
+    -- BASE VALUE
     ----------------------------------------------------------------------------------
     local distance    = preset.distance
     local offset      = preset.offset
 
     ----------------------------------------------------------------------------------
-    -- CURVES (STRONGER REGION + SEASON IMPACT)
+    -- CURVES
     ----------------------------------------------------------------------------------
     local baseCurve   = weatherCurveProfile[weatherIndex] or 1.0
     local regionCurve = computeRegionCurve(region)
@@ -122,7 +123,7 @@ local function applyFogToWeather(weatherIndex, region)
     distance          = applyRandomVariation(distance, 0.08)
 
     ----------------------------------------------------------------------------------
-    -- OFFSET MODEL (REDUCED NOISE)
+    -- OFFSET MODEL
     ----------------------------------------------------------------------------------
     local baseOffset  = offset + (1 - distance) * 234.57
     baseOffset        = applyRandomVariation(baseOffset, 0.08)
@@ -162,11 +163,20 @@ end
 --------------------------------------------------------------------------------------
 -- WEATHER CHANGE HANDLER
 --------------------------------------------------------------------------------------
-function variableFog.applyFog(e)
+function variableFog.applyFog()
     local region = tes3.getRegion(true)
 
     for weatherIndex in pairs(defaultFog) do
         applyFogToWeather(weatherIndex, region)
+    end
+end
+
+function variableFog.onCellChanged(e)
+    if not (e and e.cell) then return end
+    local region = tes3.getRegion(true)
+    if region ~= lastRegion then
+        variableFog.applyFog()
+        lastRegion = region
     end
 end
 
