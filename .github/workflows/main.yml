@@ -21,23 +21,31 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install 7zip
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y p7zip-full
+          sudo apt-get install -y p7zip-full gh
 
       - name: Build Archive
         run: |
-          7z a "${{ env.ARCHIVE_NAME }}.7z" . \
+          set -euxo pipefail
+
+          echo "Building archive..."
+          7z a "${ARCHIVE_NAME}.7z" . \
             -xr!.git \
             -xr!.github \
             -xr!README.md \
             -xr!.gitignore
 
+          echo "Verifying archive..."
+          ls -lah
+          test -f "${ARCHIVE_NAME}.7z"
+
       - name: Generate Changelog
         run: |
+          set -euxo pipefail
+
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
 
           if [ -z "$PREV_TAG" ]; then
@@ -46,16 +54,33 @@ jobs:
             LOG=$(git log "$PREV_TAG"..HEAD --pretty=format:"- %s (%h)")
           fi
 
-          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$LOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "CHANGELOG<<EOF"
+            echo "$LOG"
+            echo "EOF"
+          } >> $GITHUB_ENV
 
-      - name: Create Release
+      - name: Debug GH + context
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euxo pipefail
+
+          echo "Repo: $GITHUB_REPOSITORY"
+          gh auth status || true
+          gh repo view "$GITHUB_REPOSITORY" || true
+
+      - name: Create Release (DEBUG MODE)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euxo pipefail
+
+          echo "Final check:"
+          ls -lah "${ARCHIVE_NAME}.7z"
+
           gh release create "${{ github.ref_name }}" \
-            "${{ env.ARCHIVE_NAME }}.7z" \
-            --repo "${GITHUB_REPOSITORY}" \
+            "${ARCHIVE_NAME}.7z" \
+            --repo "$GITHUB_REPOSITORY" \
             --title "${{ github.ref_name }}" \
-            --notes "## Changelog ${{ env.CHANGELOG }}"
+            --notes "## Changelog${CHANGELOG}"
