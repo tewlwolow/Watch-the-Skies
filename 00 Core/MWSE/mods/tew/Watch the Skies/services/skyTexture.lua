@@ -76,6 +76,21 @@ function skyTexture.removeVanillaTextures()
 	end
 end
 
+local function getNonRepeating(currentTexture, textureList)
+	if #textureList == 1 then
+		return textureList[1]
+	end
+
+	local texturePath
+
+	repeat
+		local i = math.random(#textureList)
+		texturePath = textureList[i]
+	until texturePath ~= currentTexture
+
+	return texturePath
+end
+
 --------------------------------------------------------------------------------------
 
 function skyTexture.randomise(immediate)
@@ -83,6 +98,8 @@ function skyTexture.randomise(immediate)
 	if WtC.nextWeather then return end
 
 	debugLog("Starting cloud texture randomisation.")
+
+	local currentTexture = weatherNow.cloudTexture
 
 	for index, weather in ipairs(WtC.weathers) do
 		-- Skip the currently active weather if not immediate
@@ -115,8 +132,7 @@ function skyTexture.randomise(immediate)
 
 		-- Apply a random texture if available
 		if #textureList > 0 then
-			local i = math.random(#textureList)
-			local texturePath = textureList[i]
+			local texturePath = getNonRepeating(currentTexture, textureList)
 			weather.cloudTexture = texturePath
 			debugLog("Cloud texture path set: " .. weather.name .. " >> " .. weather.cloudTexture)
 		end
