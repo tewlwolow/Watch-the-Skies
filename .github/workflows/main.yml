@@ -33,8 +33,7 @@ jobs:
           7z a "${{ env.ARCHIVE_NAME }}.7z" . \
             -xr!.git \
             -xr!.github \
-            -xr!README.md \
-            -xr!.gitignore
+            -xr!README.md
 
       - name: Generate Changelog
         run: |
