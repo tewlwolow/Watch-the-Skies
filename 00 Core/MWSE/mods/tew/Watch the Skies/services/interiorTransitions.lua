@@ -6,7 +6,7 @@ local common = require("tew.Watch the Skies.components.common")
 local debugLog = common.debugLog
 local WtC = tes3.worldController.weatherController
 local intWeatherTimer
-local intFlag = 0
+local util = require("tew.Watch the Skies.util")
 
 --------------------------------------------------------------------------------------
 
@@ -77,14 +77,13 @@ function interiorTransitions.onCellChanged(e)
 	local cell = e.cell
 	if not cell then return end
 
-	interiorTransitions.stopSounds()
-
 	if cell.isOrBehavesAsExterior then
 		if intWeatherTimer then
 			intWeatherTimer:pause()
 			debugLog("Player in exterior. Pausing interior timer.")
 		end
 	else
+		interiorTransitions.stopSounds()
 		if intWeatherTimer then
 			intWeatherTimer:pause()
 			intWeatherTimer:cancel()
@@ -105,42 +104,37 @@ end
 
 --------------------------------------------------------------------------------------
 
-function interiorTransitions.stopSounds()
+function interiorTransitions.stopSounds(e)
 	local cell = tes3.getPlayerCell()
-	local cw = WtC.currentWeather
-	local rs = cw.rainLoopSound
-	local as = cw.ambientLoopSound
 
-	if cell.isOrBehavesAsExterior then
-		if intFlag == 1 then
-			if rs and not rs:isPlaying() then
-				rs:play()
-				intFlag = 0
+	if not cell.isOrBehavesAsExterior then
+		local cw = WtC.currentWeather
+		local rs = cw.rainLoopSound
+		local as = cw.ambientLoopSound
+
+		local currentSound = e and e.sound
+
+		if currentSound then
+			local function nukeWeatherSounds()
+				if currentSound.id == (rs and rs.id) or currentSound.id == (as and as.id) then
+					if rs then rs:stop() end
+					if as then as:stop() end
+				end
 			end
-			if as and not as:isPlaying() then
-				as:play()
-				intFlag = 0
-			end
+			util.matryoshka(nukeWeatherSounds)
 		else
-			return
+			local function nukeWeatherSounds()
+				if rs and rs:isPlaying() then
+					rs:stop()
+				end
+
+				if as and as:isPlaying() then
+					as:stop()
+				end
+			end
+			util.matryoshka(nukeWeatherSounds)
 		end
 	end
-
-	local function run()
-		debugLog("Checking if we need to stop rain sound.")
-		if rs and rs:isPlaying() then
-			debugLog("Stopping rain sound.")
-			rs:stop()
-			intFlag = 1
-		end
-
-		if as and as:isPlaying() then
-			as:stop()
-			intFlag = 1
-		end
-	end
-
-	timer.delayOneFrame(run)
 end
 
 -----------------------------------------------------------------------------------------

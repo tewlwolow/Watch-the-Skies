@@ -71,4 +71,15 @@ function util.getRegionWeatherChances()
 	end
 end
 
+-- Functional matryoshka
+function util.matryoshka(fun)
+	fun()
+	timer.start {
+		type = timer.real,
+		duration = math.fepsilon,
+		callback = fun,
+	}
+	timer.delayOneFrame(fun)
+end
+
 return util
