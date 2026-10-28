@@ -107,7 +107,7 @@ end
 function interiorTransitions.stopSounds(e)
 	local cell = tes3.getPlayerCell()
 
-	if not cell.isOrBehavesAsExterior then
+	if cell and not cell.isOrBehavesAsExterior then
 		local cw = WtC.currentWeather
 		local rs = cw.rainLoopSound
 		local as = cw.ambientLoopSound
