@@ -18,7 +18,7 @@ local particlesPath = "Data Files\\Meshes\\" .. meshRoot
 --------------------------------------------------------------------------------------
 
 local SNOW_POINT = 0.2
-local RAIN_POINT = 0.1
+local RAIN_POINT = 0.11
 
 local particles = {
 	["rain"] = {},
@@ -253,6 +253,10 @@ function particleMesh.changeParticleMesh(particleType)
 	end
 
 	newParticleMesh = table.choice(particleList)
+
+	tes3.messageBox {
+		message = newParticleMesh.name,
+	}
 
 	particleNode = nil
 	lastColours.r = -1
